@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import Markdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import sampleProblems from '@/constants/sampleProblems';
@@ -18,6 +18,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
+import { Editor } from '@monaco-editor/react';
 
 function page() {
     const [IsDragging, setIsDragging] = useState(false);
@@ -96,6 +97,14 @@ function page() {
         e.preventDefault();
         setFontSize(parseInt(e.target.value, 10))
     }
+    const editorRef = useRef(null);
+
+    function handleEditorDidMount(editor: any, monaco: any) {
+        // here is the editor instance
+        // you can store it in `useRef` for further usage
+        editorRef.current = editor;
+    }
+
     return (
         <div>
 
@@ -108,16 +117,22 @@ function page() {
 
                 <div className='h-[calc(100vh-66px)] w-[55rem]' style={{ width: `${rightWidth}%` }}>
                     <div style={{ height: `${upHeight}%` }}>
-
+                        <Editor
+                            // height="90vh"
+                            defaultLanguage="java"
+                            theme='vs-dark'
+                            defaultValue="start coding ..."
+                            onMount={handleEditorDidMount}
+                        />
                     </div>
 
                     <div className='border border-gray-600 w-full h-3 cursor-row-resize' onMouseDown={handleMouseUpDown} ></div>
 
-                    <div className=' w-full m-0' style={{ height: `${downHeight}%` }}>
+                    <div className='w-full relative ' style={{ height: `${downHeight}%` }}>
 
                         <Sheet >
                             <SheetTrigger asChild>
-                                <Button variant="outline">Bottom</Button>
+                                <Button className=' w-[6rem]  absolute bottom-4 left-2' >Test cases</Button>
                             </SheetTrigger>
 
                             <SheetContent side={"bottom"}
@@ -132,10 +147,10 @@ function page() {
                                 <SheetHeader>
                                     <SheetTitle>Test cases</SheetTitle>
                                 </SheetHeader>
-                                <div className="flex">
-                                    <div><Button variant="ghost">Case: 1</Button></div>
-                                    <div><Button variant="ghost">Case: 2</Button></div>
-                                    <div><Button variant="ghost">Case: 3</Button></div>
+                                <div className="flex gap-4 mt-2">
+                                    <div><Button className='w-[4rem]'>Case: 1</Button></div>
+                                    <div><Button className='w-[4rem]'>Case: 2</Button></div>
+                                    <div><Button className='w-[4rem]'>Case: 3</Button></div>
                                 </div>
 
                             </SheetContent>
