@@ -6,8 +6,6 @@ import rehypeRaw from 'rehype-raw';
 import sampleProblems from '@/constants/sampleProblems';
 import DOMPurify from 'isomorphic-dompurify';
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
     Sheet,
     SheetClose,
@@ -18,7 +16,18 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Editor } from '@monaco-editor/react';
+import languages from '@/constants/languages';
+import themes from '@/constants/themes';
 
 function page() {
     const [IsDragging, setIsDragging] = useState(false);
@@ -30,11 +39,12 @@ function page() {
     const [editorLeft, setEditorLeft] = useState(650);
     const [tab, setTab] = useState('Description');
 
-    const [language, setLanguage] = useState('javascript');
-    const [themeName, setTheme] = useState('twilight');
+    const [languageValue, setLanguageValue] = useState('javascript');
+    const [themeName, setThemeName] = useState('vs-dark');
     const [fontSize, setFontSize] = useState(20);
 
     const problems = DOMPurify.sanitize(sampleProblems.problem1);
+
 
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -83,14 +93,12 @@ function page() {
         }
     }
 
-    const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        e.preventDefault();
-        setTheme(e.target.value);
+    const handleThemeChange = (theme: string) => {
+        setThemeName(theme);
     }
 
-    const handleLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        e.preventDefault();
-        setLanguage(e.target.value);
+    const handleLanguage = (lang: string) => {
+        setLanguageValue(lang);
     }
 
     const handleSize = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -105,10 +113,11 @@ function page() {
         editorRef.current = editor;
     }
 
+
+
     return (
         <div>
-
-            <div className='border border-gray-600 dark:border-black h-[calc(100vh-56px)] flex mt-1' onMouseUp={handleMouseUp} onMouseMove={dragMouseChange}>
+            <div className='border border-gray-600  h-[calc(100vh-56px)] flex mt-1' onMouseUp={handleMouseUp} onMouseMove={dragMouseChange}>
                 <div className='border border-gray-600 dark:border-black h-[calc(100vh-56px)] w-[45rem] p-4' style={{ width: `${IsLeftWidth}%` }}>
                     <Markdown rehypePlugins={[rehypeRaw]}>{problems}</Markdown>
                 </div>
@@ -116,14 +125,49 @@ function page() {
                 <div className='border border-gray-600 w-2 cursor-col-resize' onMouseDown={handleMouseDown} ></div>
 
                 <div className='h-[calc(100vh-66px)] w-[55rem]' style={{ width: `${rightWidth}%` }}>
-                    <div style={{ height: `${upHeight}%` }}>
+                    <div className='flex'>
+                        <div className='border'>
+                            <Select onValueChange={handleLanguage}>
+                                <SelectTrigger className="w-[140px]">
+                                    <SelectValue placeholder={languageValue} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {
+                                            languages.map(lang => (
+                                                <SelectItem key={lang.name} value={lang.name}>{lang.name}</SelectItem>
+                                            ))
+                                        }
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div>
+                            <Select onValueChange={handleThemeChange}>
+                                <SelectTrigger className="w-[140px]">
+                                    <SelectValue placeholder={themeName} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {
+                                            themes.map(theme => (
+                                                <SelectItem key={theme.value} value={theme.value}>{theme.name}</SelectItem>
+                                            ))
+                                        }
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                    <div style={{ height: `${upHeight}%` }} className=''>
+
                         <Editor
-                            // height="90vh"
-                            defaultLanguage="java"
-                            theme='vs-dark'
-                            defaultValue="start coding ..."
+                            defaultLanguage={languageValue}
+                            theme={themeName}
+                            defaultValue="//start coding ..."
                             onMount={handleEditorDidMount}
                         />
+
                     </div>
 
                     <div className='border border-gray-600 w-full h-3 cursor-row-resize' onMouseDown={handleMouseUpDown} ></div>
@@ -134,7 +178,6 @@ function page() {
                             <SheetTrigger asChild>
                                 <Button className=' w-[6rem]  absolute bottom-4 left-2' >Test cases</Button>
                             </SheetTrigger>
-
                             <SheetContent side={"bottom"}
                                 style={{
                                     width: `${rightWidth}%`,
@@ -142,7 +185,6 @@ function page() {
                                     left: 'auto',
                                     position: 'absolute'
                                 }}
-
                             >
                                 <SheetHeader>
                                     <SheetTitle>Test cases</SheetTitle>
