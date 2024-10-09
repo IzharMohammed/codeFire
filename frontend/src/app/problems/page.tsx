@@ -58,7 +58,6 @@ function page() {
         sessionStorage.setItem('theme', themeName)
     }, [themeName]);
 
-    const [fontSize, setFontSize] = useState(20);
 
     const problems = DOMPurify.sanitize(sampleProblems.problem1);
 
@@ -118,10 +117,7 @@ function page() {
         setLanguageValue(lang);
     }
 
-    const handleSize = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        e.preventDefault();
-        setFontSize(parseInt(e.target.value, 10))
-    }
+
     const editorRef = useRef(null);
 
     function handleEditorDidMount(editor: any, monaco: any) {
@@ -176,9 +172,10 @@ function page() {
                             </Select>
                         </div>
                     </div>
-                    <div style={{ height: `${upHeight}%` }} className=''>
+                    <div >
 
                         <Editor
+                            height='86vh'
                             defaultLanguage={languageValue}
                             theme={themeName}
                             defaultValue="//start coding ..."
@@ -187,9 +184,9 @@ function page() {
 
                     </div>
 
-                    <div className='border border-gray-600 w-full h-3 cursor-row-resize' onMouseDown={handleMouseUpDown} ></div>
+                    {/* <div className='border border-gray-600 w-full h-3 cursor-row-resize' onMouseDown={handleMouseUpDown} ></div> */}
 
-                    <div className='w-full relative ' style={{ height: `${downHeight}%` }}>
+                    <div className='w-full relative ' >
 
                         <Sheet >
                             <SheetTrigger asChild>
@@ -225,4 +222,4 @@ function page() {
     )
 }
 
-export default page
+export default page;

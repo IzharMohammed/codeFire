@@ -1,11 +1,15 @@
-import { ToggleTheme } from "@/components/theme-toggle";
-import { Button } from "@/components/ui/button";
+import Appbar from "@/components/appbar";
+import { NEXT_AUTH } from "@/lib/auth";
+import { getServerSession } from "next-auth/next"
 
-export default function Home() {
+export default async function Home() {
+
+  const session = await getServerSession(NEXT_AUTH);
+
   return (
     <div className="flex justify-center mt-[8rem]">
-      <Button>Fire start</Button>
-      <ToggleTheme />
+      {JSON.stringify(session)}
+      <Appbar />
     </div>
   );
 }
