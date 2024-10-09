@@ -8,7 +8,7 @@ export default async function Home() {
 
   return (
     <div className="flex justify-center mt-[8rem]">
-      {JSON.stringify(session)}
+    
       <Appbar />
     </div>
   );
