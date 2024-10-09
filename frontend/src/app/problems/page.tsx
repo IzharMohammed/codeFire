@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import sampleProblems from '@/constants/sampleProblems';
@@ -28,6 +28,7 @@ import {
 import { Editor } from '@monaco-editor/react';
 import languages from '@/constants/languages';
 import themes from '@/constants/themes';
+import { json } from 'stream/consumers';
 
 function page() {
     const [IsDragging, setIsDragging] = useState(false);
@@ -39,8 +40,24 @@ function page() {
     const [editorLeft, setEditorLeft] = useState(650);
     const [tab, setTab] = useState('Description');
 
-    const [languageValue, setLanguageValue] = useState('javascript');
-    const [themeName, setThemeName] = useState('vs-dark');
+    const [languageValue, setLanguageValue] = useState(() => {
+        const language = sessionStorage.getItem('language');
+        return language ? language : 'javascript'
+    });
+
+    const [themeName, setThemeName] = useState(() => {
+        const theme = sessionStorage.getItem('theme');
+        return theme ? theme : 'vs-dark'
+    });
+
+    useEffect(() => {
+        sessionStorage.setItem('language', languageValue)
+    }, [languageValue])
+
+    useEffect(() => {
+        sessionStorage.setItem('theme', themeName)
+    }, [themeName]);
+
     const [fontSize, setFontSize] = useState(20);
 
     const problems = DOMPurify.sanitize(sampleProblems.problem1);
