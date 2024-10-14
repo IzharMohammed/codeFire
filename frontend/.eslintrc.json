@@ -1,3 +1,24 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "plugins": ["@typescript-eslint"], // Make sure to include the TypeScript plugin
+  "rules": {
+    "no-unused-vars": "warn", // Change to 'error' if you want it to fail the build
+    "@typescript-eslint/no-unused-vars": "warn", // Same for TypeScript
+    "@typescript-eslint/no-explicit-any": "warn", // Proper rule to avoid 'any' type
+    "react-hooks/rules-of-hooks": "warn",
+    "react-hooks/exhaustive-deps": "warn"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "settings": {
+    "react": {
+      "version": "detect" // Automatically detect the react version
+    }
+  }
 }

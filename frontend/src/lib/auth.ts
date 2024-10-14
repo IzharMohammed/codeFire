@@ -1,23 +1,25 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
+import { json } from "stream/consumers";
 
 export const NEXT_AUTH = {
     providers: [
         CredentialsProvider({
             name: 'Email',
             credentials: {
-                username: { label: 'Username', type: 'text', placeholder: 'random@gmail.com' },
+                username: { label: 'username', type: 'text' },
+                Email: { label: 'Email', type: 'text', placeholder: 'random@gmail.com' },
                 password: { label: 'Password', type: 'password' }
             },
             async authorize(credentials: any) {
-                console.log(credentials);
+                console.log('credentials', credentials);
 
-                // Prisma logic for validating user
+                
 
                 return {
-                    id: 'izhar1',
-                    email: 'izhar@gmail.com',
+                    id: 'izhar3',
+                    email: 'izhar3@gmail.com',
                     password: '12345'
                 }
             }
@@ -35,17 +37,24 @@ export const NEXT_AUTH = {
     ],
 
     secret: process.env.NEXTAUTH_SECRET,
-    
+
     callbacks: {
         async jwt({ token, account, profile }: any) {
-            console.log('token', token);
+            console.log('before token', token);
+            console.log('account', account);
+            console.log('profile', profile);
+
             token.userId = token.sub;
+            console.log('after changing token', token);
+
             return token
         },
         session: ({ session, token, user }: any) => {
             if (session && session.user) {
                 session.user.id = token.userId;
             }
+            console.log(`session:- ${JSON.stringify(session)}`);
+
             return session;
         }
     }
