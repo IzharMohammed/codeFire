@@ -101,11 +101,35 @@ router.post('/google', async (req: Request, res: Response) => {
 
 })
 
-router.post('/github', (req: Request, res: Response) => {
+router.post('/github', async (req: Request, res: Response) => {
     console.log('inside github');
     const { name, image, githubId } = req.body;
+    try {
+        const existingUser = await prisma.user.findUnique({
+            where: {
+                githubId
+            }
+        })
 
-    res.json({ msg: `successfully logged in with github` })
+        if (existingUser) {
+            return res.status(200).json({ existingUser });
+        }
+
+        const createUser = await prisma.user.create({
+            data: {
+                name,
+                image,
+                githubId
+            }
+        })
+
+        console.log('created user', createUser);
+        return res.status(201).json({ createUser });
+
+    } catch (error) {
+        console.error('Error during login/signup:', error);
+        return res.status(500).json({ msg: 'An error occurred during login/signup' });
+    }
 })
 
 
