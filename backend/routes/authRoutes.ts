@@ -59,7 +59,6 @@ router.post('/login', async (req: Request, res: Response) => {
 
         console.log('user created', createUser);
 
-
         return res.status(201).json({ createUser })
 
     } catch (error) {

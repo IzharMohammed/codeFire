@@ -8,12 +8,15 @@ import axios from "axios";
 export const NEXT_AUTH = {
     providers: [
         CredentialsProvider({
+
             name: 'Email',
+
             credentials: {
                 username: { label: 'username', type: 'text' },
                 Email: { label: 'Email', type: 'text', placeholder: 'random@gmail.com' },
                 password: { label: 'Password', type: 'password' }
             },
+
             async authorize(credentials: any) {
                 console.log('credentials', credentials);
                 const auth = await axios.post(`${process.env.BACKEND_URL}/api/v1/auth/login`, {
@@ -26,19 +29,36 @@ export const NEXT_AUTH = {
                     },
                 })
 
-                console.log('here', auth.data.userExist.id);
-                console.log('email', auth.data.userExist.Email);
-                console.log('password', auth.data.userExist.password);
+                console.log('response from backend', auth.data);
+
+                if (auth.data && auth.data.userExist) {
+                    console.log('id', auth.data.userExist.id);
+                    console.log('email', auth.data.userExist.Email);
+                    console.log('password', auth.data.userExist.password);
 
 
-                return {
-                    id: auth.data.userExist.id,
-                    email: auth.data.userExist.email,
-                    username: auth.data.userExist.name,
-                    password: auth.data.userExist.password,
+                    return {
+                        id: auth.data.userExist.id,
+                        email: auth.data.userExist.email,
+                        username: auth.data.userExist.name,
+                        password: auth.data.userExist.password,
+                    }
                 }
+
+                if (auth.data && auth.data.createUser) {
+                    return {
+                        id: auth.data.createUser.id,
+                        email: auth.data.createUser.email,
+                        username: auth.data.createUser.name,
+                        password: auth.data.createUser.password,
+                    }
+                }
+
+                return null;
+
             }
         }),
+
 
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || '',
@@ -81,19 +101,19 @@ export const NEXT_AUTH = {
             //     })
             // }
 
-            // if (account.provider == 'google') {
-            //     // api for google auth
-            //     const auth = await axios.post(`${process.env.BACKEND_URL}/api/v1/auth/google`, {
-            //         name: token.name,
-            //         email: token.email,
-            //         image: token.picture,
-            //         googleId: token.userId
-            //     }, {
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //     })
-            // }
+            if (account && account.provider == 'google') {
+                // api for google auth
+                const auth = await axios.post(`${process.env.BACKEND_URL}/api/v1/auth/google`, {
+                    name: token.name,
+                    email: token.email,
+                    image: token.picture,
+                    googleId: token.userId
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+            }
 
 
             return token
