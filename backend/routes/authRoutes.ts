@@ -36,8 +36,8 @@ router.post('/login', async (req: Request, res: Response) => {
         const emailSchema = zod.string().email();
         const emailResponse = emailSchema.safeParse(Email);
 
-        console.log('email response',emailResponse);
-        
+        console.log('email response', emailResponse);
+
         // Return an error if the email is invalid
         if (!emailResponse.success) {
             return res.json({
@@ -68,11 +68,37 @@ router.post('/login', async (req: Request, res: Response) => {
 });
 
 
-router.post('/google', (req: Request, res: Response) => {
+router.post('/google', async (req: Request, res: Response) => {
     console.log('inside google');
     const { name, email, image, googleId } = req.body;
+    try {
+        const existingUser = await prisma.user.findUnique({
+            where: {
+                email
+            }
+        })
 
-    res.json({ msg: `successfully logged in with google` })
+        if (existingUser) {
+            return res.status(200).json({ existingUser });
+        }
+
+        const createUser = await prisma.user.create({
+            data: {
+                name,
+                email,
+                image,
+                googleId
+            }
+        })
+
+        console.log('created user', createUser);
+        return res.status(201).json({ createUser });
+
+    } catch (error) {
+        console.error('Error during login/signup:', error);
+        return res.status(500).json({ msg: 'An error occurred during login/signup' });
+    }
+
 })
 
 router.post('/github', (req: Request, res: Response) => {

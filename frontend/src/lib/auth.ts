@@ -88,18 +88,18 @@ export const NEXT_AUTH = {
 
             console.log('after changing token', token);
 
-            // if (account.provider == 'github') {
-            //     // express api for github
-            //     const auth = await axios.post(`${process.env.BACKEND_URL}/api/v1/auth/github`, {
-            //         name: token.name,
-            //         image: token.picture,
-            //         githubId: token.userId,
-            //     }, {
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //     })
-            // }
+            if (account && account.provider == 'github') {
+                // express api for github
+                const auth = await axios.post(`${process.env.BACKEND_URL}/api/v1/auth/github`, {
+                    name: token.name,
+                    image: token.picture,
+                    githubId: token.userId,
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+            }
 
             if (account && account.provider == 'google') {
                 // api for google auth

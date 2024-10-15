@@ -64,11 +64,34 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         return res.status(500).json({ msg: 'An error occurred during login/signup' });
     }
 }));
-router.post('/google', (req, res) => {
+router.post('/google', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('inside google');
     const { name, email, image, googleId } = req.body;
-    res.json({ msg: `successfully logged in with google` });
-});
+    try {
+        const existingUser = yield db_1.default.user.findUnique({
+            where: {
+                email
+            }
+        });
+        if (existingUser) {
+            return res.status(200).json({ existingUser });
+        }
+        const createUser = yield db_1.default.user.create({
+            data: {
+                name,
+                email,
+                image,
+                googleId
+            }
+        });
+        console.log('created user', createUser);
+        return res.status(201).json({ createUser });
+    }
+    catch (error) {
+        console.error('Error during login/signup:', error);
+        return res.status(500).json({ msg: 'An error occurred during login/signup' });
+    }
+}));
 router.post('/github', (req, res) => {
     console.log('inside github');
     const { name, image, githubId } = req.body;
