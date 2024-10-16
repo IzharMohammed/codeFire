@@ -16,3 +16,11 @@ model User {
   githubId String? @unique
   googleId String? @unique
 }
+
+model Problems {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+  difficulty  String
+  testCases   String
+}

@@ -30,8 +30,6 @@ import languages from '@/constants/languages';
 import themes from '@/constants/themes';
 
 function page({ params: { problemTitle } }: { params: { problemTitle: string } }) {
-  
-    
 
     const [IsDragging, setIsDragging] = useState(false);
     const [DraggingVertical, setDraggingVertical] = useState(false);
