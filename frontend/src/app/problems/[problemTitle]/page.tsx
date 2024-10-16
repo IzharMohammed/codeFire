@@ -28,9 +28,11 @@ import {
 import { Editor } from '@monaco-editor/react';
 import languages from '@/constants/languages';
 import themes from '@/constants/themes';
-import { json } from 'stream/consumers';
 
-function page() {
+function page({ params: { problemTitle } }: { params: { problemTitle: string } }) {
+  
+    
+
     const [IsDragging, setIsDragging] = useState(false);
     const [DraggingVertical, setDraggingVertical] = useState(false);
     const [IsLeftWidth, setIsLeftWidth] = useState(50);
@@ -60,8 +62,6 @@ function page() {
 
 
     const problems = DOMPurify.sanitize(sampleProblems.problem1);
-
-
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         console.log(e);
@@ -130,6 +130,7 @@ function page() {
 
     return (
         <div>
+            <div>{problemTitle}</div>
             <div className='border border-gray-600  h-[calc(100vh-56px)] flex mt-1' onMouseUp={handleMouseUp} onMouseMove={dragMouseChange}>
                 <div className='border border-gray-600 dark:border-black h-[calc(100vh-56px)] w-[45rem] p-4' style={{ width: `${IsLeftWidth}%` }}>
                     <Markdown rehypePlugins={[rehypeRaw]}>{problems}</Markdown>
