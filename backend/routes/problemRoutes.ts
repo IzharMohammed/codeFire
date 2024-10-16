@@ -5,8 +5,15 @@ const router = Router();
 
 
 // Problem Routes
-router.get('/', (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
     // Retrieve all problems
+    try {
+        const problems = await prisma.problems.findMany();
+        return res.json(problems);
+    } catch (error) {
+        console.log(`error:- ${error}`);
+        return res.json({ msg: `Error in fetching of the problem :- ${error}` });
+    }
 });
 
 router.get('/:problemId', async (req: Request, res: Response) => {

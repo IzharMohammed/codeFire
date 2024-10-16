@@ -2,12 +2,12 @@
 import { useRouter } from 'next/navigation';
 import React from 'react'
 
-function ProblemTitle({ problem }: { problem: { title: string } }) {
+function ProblemTitle({ title, id }: { title: string, id: number }) {
     const router = useRouter();
 
     return (
-        <div className="text-left cursor-pointer hover:text-blue-600" onClick={() => router.push(`/problems/${problem.title}`)}>
-            {problem.title.length > 36 ? `${(problem.title).slice(0, 36)}...` : problem.title}
+        <div className="text-left cursor-pointer hover:text-blue-600" onClick={() => router.push(`/problems/${id}`)}>
+            {title.length > 36 ? `${(title).slice(0, 36)}...` : title}
         </div>
     )
 }
