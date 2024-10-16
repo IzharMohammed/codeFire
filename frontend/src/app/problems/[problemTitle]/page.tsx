@@ -28,6 +28,8 @@ import {
 import { Editor } from '@monaco-editor/react';
 import languages from '@/constants/languages';
 import themes from '@/constants/themes';
+import axios from 'axios';
+import useProblem from '@/hooks/useProblem';
 
 function page({ params: { problemTitle } }: { params: { problemTitle: string } }) {
 
@@ -39,6 +41,9 @@ function page({ params: { problemTitle } }: { params: { problemTitle: string } }
     const [downHeight, setDownHeight] = useState(30);
     const [editorLeft, setEditorLeft] = useState(650);
     const [tab, setTab] = useState('Description');
+
+    const { loading, problem, error } = useProblem(3);
+    console.log(problem);
 
     const [languageValue, setLanguageValue] = useState(() => {
         const language = sessionStorage.getItem('language');
@@ -59,7 +64,11 @@ function page({ params: { problemTitle } }: { params: { problemTitle: string } }
     }, [themeName]);
 
 
-    const problems = DOMPurify.sanitize(sampleProblems.problem1);
+     const problems1 = problem?.description ? DOMPurify.sanitize(problem.description) : '';
+     console.log(problems1);
+     
+     const problems = DOMPurify.sanitize(sampleProblems.problem1)
+     console.log(problems);
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         console.log(e);
@@ -124,14 +133,13 @@ function page({ params: { problemTitle } }: { params: { problemTitle: string } }
         editorRef.current = editor;
     }
 
-
-
     return (
         <div>
             <div>{problemTitle}</div>
             <div className='border border-gray-600  h-[calc(100vh-56px)] flex mt-1' onMouseUp={handleMouseUp} onMouseMove={dragMouseChange}>
-                <div className='border border-gray-600 dark:border-black h-[calc(100vh-56px)] w-[45rem] p-4' style={{ width: `${IsLeftWidth}%` }}>
-                    <Markdown rehypePlugins={[rehypeRaw]}>{problems}</Markdown>
+                <div className='border border-gray-600 dark:border-black h-[calc(100vh-56px)] w-[45rem] p-4 overflow-y-scroll no-scrollbar' style={{ width: `${IsLeftWidth}%` }}>
+                    <div className='text-2xl font-bold mb-4'>{problem?.title}</div>
+                    <Markdown rehypePlugins={[rehypeRaw]}>{problems1}</Markdown>
                 </div>
 
                 <div className='border border-gray-600 w-2 cursor-col-resize' onMouseDown={handleMouseDown} ></div>
