@@ -1,7 +1,7 @@
 services:
   frontend:
     container_name: codeFire-frontend
-    image: frontend
+    image: codefire-frontend
     build:
       context: ./frontend
       dockerfile: frontend.dockerfile
@@ -14,7 +14,7 @@ services:
       - backend
   backend:
     container_name: codeFire-backend
-    image: backend
+    image: codefire-backend
     build:
       context: ./backend
       dockerfile: backend.dockerfile

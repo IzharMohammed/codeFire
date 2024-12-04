@@ -17,6 +17,7 @@ const db_1 = __importDefault(require("./lib/db"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const problemRoutes_1 = __importDefault(require("./routes/problemRoutes"));
 const submissionRoutes_1 = __importDefault(require("./routes/submissionRoutes"));
+const cors_1 = __importDefault(require("cors"));
 const app = express();
 const PORT = 4000;
 app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -24,9 +25,13 @@ app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json({ users });
 }));
 app.use(express.json());
+app.use((0, cors_1.default)());
 app.use('/api/v1/auth', authRoutes_1.default);
-app.use('/api/v1//problems', problemRoutes_1.default);
-app.use('/api/v1//submissions', submissionRoutes_1.default);
+app.use('/api/v1/problems', problemRoutes_1.default);
+app.use('/api/v1/submissions', submissionRoutes_1.default);
+app.get('/test', (req, res) => {
+    res.json({ msg: 'healthy api' });
+});
 app.listen(PORT, () => {
     console.log(`server is up at ${PORT}`);
 });
