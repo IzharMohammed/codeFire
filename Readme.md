@@ -9,3 +9,6 @@ npm run build --> for compiling TS to JS file
 npm run dev --> for running backend at localhost: 4000 in backend directory
 npm run dev --> for running frontend in frontend  directory
 `
+## Run judge0 
+wsl --install 
+docker-compose up -d

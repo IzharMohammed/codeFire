@@ -43,6 +43,10 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     const [editorLeft, setEditorLeft] = useState(650);
     const [tab, setTab] = useState('Description');
 
+
+    const [sourceCode, setSourceCode] = useState('');
+
+
     const { loading, problem, error } = useProblem(problemId);
     console.log(problem);
 
@@ -132,6 +136,34 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         // here is the editor instance
         // you can store it in `useRef` for further usage
         editorRef.current = editor;
+        console.log('editor', editor);
+
+    }
+
+    function handleEditorChange(value: any) {
+        // here is the current value
+        console.log(`value',${value}`);
+        setSourceCode(value);
+    }
+
+   async function submitSolution() {
+        console.log('lh');
+
+      const response = await axios.post(`http://localhost:4000/api/v1/submissions/`, {
+            source_code: sourceCode,
+            language_id: (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '50'),
+            stdin: `
+            2 4 3
+            5 6 4
+            `,
+            expected_output: "7 0 8\n"
+        })
+        const stdout = response.data.msg.stdout;
+        const status = response.data.msg.status.description;
+        console.log(`stdout: ${stdout}, status ${status}`);
+        
+        console.log('response', response);
+        
     }
 
     return (
@@ -178,15 +210,22 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                                 </SelectContent>
                             </Select>
                         </div>
+                        <div>
+                            <Button onClick={submitSolution}>Run</Button>
+                        </div>
                     </div>
                     <div >
+
 
                         <Editor
                             height='86vh'
                             defaultLanguage={languageValue}
                             theme={themeName}
+                            // value={sourceCode}
+                            // onChange={(e) => setSourceCode(e.target.value)}
                             defaultValue="//start coding ..."
                             onMount={handleEditorDidMount}
+                            onChange={handleEditorChange}
                         />
 
                     </div>
