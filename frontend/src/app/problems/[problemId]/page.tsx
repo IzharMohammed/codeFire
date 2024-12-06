@@ -153,16 +153,16 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
             source_code: sourceCode,
             language_id: (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '50'),
             stdin: `
-            2 4 3
-            5 6 4
+           1 2 3 4 5 6 7
+           3
             `,
-            expected_output: "7 0 8\n"
+            expected_output: "5 6 7 1 2 3 4"
         })
         const stdout = response.data.msg.stdout;
         const status = response.data.msg.status.description;
         console.log(`stdout: ${stdout}, status ${status}`);
         
-        console.log('response', response);
+        // console.log('response', response);
         
     }
 

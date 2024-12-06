@@ -6,16 +6,6 @@ const Router = require("express");
 
 const router = Router();
 
-interface Judge0Response {
-    stdout: string | null;
-    stderr: string | null;
-    status: { id: number; description: string };
-    compile_output: string | null;
-    message: string | null;
-    time: string;
-    memory: number;
-    token: string;
-}
 
 // Submissions Routes
 router.post('/', async (req: Request, res: Response) => {
@@ -30,8 +20,8 @@ router.post('/', async (req: Request, res: Response) => {
     })
     console.log('token from judge0', respone.data.token);
     const token = respone.data.token;
-    const response = await axios.get(`${process.env.JUDGE0_URL}/submissions/57c11634-4c69-4ed0-95bb-5a246e97bf2e`);
-    // console.log(`response from judge0:- ${JSON.stringify(response)}`);
+    const response = await axios.get(`${process.env.JUDGE0_URL}/submissions/${token}`);
+    console.log(`response from judge0:- ${JSON.stringify(response.data)}`);
     // const stdout = respone.data.stdout;
     // const description = respone.data.status.description;
 

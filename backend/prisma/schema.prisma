@@ -18,9 +18,30 @@ model User {
 }
 
 model Problems {
-  id          Int    @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   title       String
   description String
   difficulty  String
-  testCases   String
+  testCases   Testcases[]
 }
+
+model Testcases {
+  id        Int      @id @default(autoincrement())
+  input     String
+  output    String
+  problem   Problems @relation(fields: [problemId], references: [id])
+  problemId Int      
+}
+
+// Expectd output :-
+// {
+//   "id": 1,
+//   "title": "Reverse String",
+//   "description": "Reverse the given string.",
+//   "difficulty": "Easy",
+//   "testCases": [
+//     { "id": 1, "input": "hello", "output": "olleh" },
+//     { "id": 2, "input": "world", "output": "dlrow" },
+//     { "id": 3, "input": "abc", "output": "cba" }
+//   ]
+// }
