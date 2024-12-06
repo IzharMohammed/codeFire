@@ -47,7 +47,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     const [sourceCode, setSourceCode] = useState('');
 
 
-    const { loading, problem, error } = useProblem(problemId);
+    const { loading, problem, error, testCases } = useProblem(problemId);
     console.log(problem);
 
     const [languageValue, setLanguageValue] = useState(() => {
@@ -146,10 +146,10 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         setSourceCode(value);
     }
 
-   async function submitSolution() {
+    async function submitSolution() {
         console.log('lh');
 
-      const response = await axios.post(`http://localhost:4000/api/v1/submissions/`, {
+        const response = await axios.post(`http://localhost:4000/api/v1/submissions/`, {
             source_code: sourceCode,
             language_id: (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '50'),
             stdin: `
@@ -161,9 +161,9 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         const stdout = response.data.msg.stdout;
         const status = response.data.msg.status.description;
         console.log(`stdout: ${stdout}, status ${status}`);
-        
+
         // console.log('response', response);
-        
+
     }
 
     return (
@@ -250,9 +250,28 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                                     <SheetTitle>Test cases</SheetTitle>
                                 </SheetHeader>
                                 <div className="flex gap-4 mt-2">
-                                    <div><Button className='w-[4rem]'>Case: 1</Button></div>
-                                    <div><Button className='w-[4rem]'>Case: 2</Button></div>
-                                    <div><Button className='w-[4rem]'>Case: 3</Button></div>
+                                    {/* {
+                                        testCases!.map(tc=>(
+                                        <div>
+                                            <Button className='w-[4rem]'>
+
+                                            </Button>
+                                        </div>
+                                        ))
+                                    } */}
+                                    <div className='flex flex-col'>
+                                    <div className='flex gap-4'>
+                                        <div><Button className='w-[4rem]'>Case: 1</Button></div>
+                                        <div><Button className='w-[4rem]'>Case: 2</Button></div>
+                                        <div><Button className='w-[4rem]'>Case: 3</Button></div>
+                                    </div>
+                                    <div>
+                                        <div>Input</div>
+                                        <Button className='w-[40rem]'>Input</Button>
+                                        <div>output</div>
+                                        <Button className='w-[40rem]'>output</Button>
+                                    </div>
+                                    </div>
                                 </div>
 
                             </SheetContent>

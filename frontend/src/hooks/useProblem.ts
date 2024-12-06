@@ -13,12 +13,13 @@ const useProblem = (id: number) => {
     const [loading, setLoading] = useState(false);
     const [problem, setProblem] = useState<Problem | null>(null);
     const [error, setError] = useState<string | null>(null);
-
+    const [testCases, setTestCases] = useState<string[] | null>(null);
     useEffect(() => {
         const fetchProblem = async () => {
             setLoading(true);
             try {
                 const response = await axios.get(`http://localhost:4000/api/v1/problems/${id}`);
+                setTestCases(response.data.testCases);
                 setProblem(response.data);
             } catch (error) {
                 setError('Error fetching problem data');
@@ -33,6 +34,7 @@ const useProblem = (id: number) => {
 
     return {
         loading,
+        testCases,
         problem,
         error
     };

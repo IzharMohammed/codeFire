@@ -3,7 +3,18 @@ import prisma from "../lib/db";
 const Router = require("express")
 const router = Router();
 
+interface TestCase {
+    input: string,
+    output: string,
+}
 
+interface CreateProblemBody {
+    title: string;
+    description: string;
+    difficulty: string;
+    testCases: TestCase[];
+}
+  
 // Problem Routes
 router.get('/', async (req: Request, res: Response) => {
     // Retrieve all problems
@@ -22,22 +33,31 @@ router.get('/:problemId', async (req: Request, res: Response) => {
     const problem = await prisma.problems.findUnique({
         where: {
             id: problemId
+        },
+        include:{
+            testCases: true
         }
     })
     console.log(problem);
     return res.json(problem);
 });
 
-router.post('/createproblem', async (req: Request, res: Response) => {
+router.post('/createproblem', async (req: Request<{}, {}, CreateProblemBody>, res: Response) => {
     //  Create a new problem
     const { title, description, difficulty, testCases } = req.body;
+
     try {
         const problem = await prisma.problems.create({
             data: {
                 title,
                 difficulty,
                 description,
-                testCases
+                testCases: {
+                    create: testCases.map((tc) => ({
+                        input: tc.input,
+                        output: tc.output,
+                    }))
+                }
             }
         })
 
@@ -50,5 +70,23 @@ router.post('/createproblem', async (req: Request, res: Response) => {
         return res.json({ msg: `Error in adding of the problem :- ${error}` });
     }
 });
+
+router.post('/updateproblem', async (req: Request, res: Response) => {
+    const { id, description } = req.body;
+    try {
+        await prisma.problems.update({
+            where: {
+                id
+            },
+            data: {
+                description
+            }
+        })
+        return res.json({msg: `${id} updated successfully`})
+    } catch (error) {
+        console.log(`error:- ${error}`);
+        return res.json({ msg: `Error in adding of the problem :- ${error}` });
+    }
+})
 
 export default router;
