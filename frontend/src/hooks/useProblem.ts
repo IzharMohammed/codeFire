@@ -9,11 +9,17 @@ interface Problem {
     testCases: string;
 }
 
+interface TestCase {
+    id: number;
+    input: string;
+    output: string;
+}
+
 const useProblem = (id: number) => {
     const [loading, setLoading] = useState(false);
     const [problem, setProblem] = useState<Problem | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [testCases, setTestCases] = useState<string[] | null>(null);
+    const [testCases, setTestCases] = useState<TestCase[] | null>(null);
     useEffect(() => {
         const fetchProblem = async () => {
             setLoading(true);

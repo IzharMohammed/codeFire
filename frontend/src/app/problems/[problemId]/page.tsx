@@ -42,7 +42,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     const [downHeight, setDownHeight] = useState(30);
     const [editorLeft, setEditorLeft] = useState(650);
     const [tab, setTab] = useState('Description');
-
+    const [testCaseIndex, setTestCaseIndex] = useState(0);
 
     const [sourceCode, setSourceCode] = useState('');
 
@@ -165,6 +165,14 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         // console.log('response', response);
 
     }
+    console.log('test cases', testCases);
+
+    const changeTestCase = (index: number) => {
+        setTestCaseIndex(index);
+        // console.log(testCases![testCaseIndex].input)
+        // console.log(`index:- ${index}`);
+    }
+
 
     return (
         <div>
@@ -250,28 +258,34 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                                     <SheetTitle>Test cases</SheetTitle>
                                 </SheetHeader>
                                 <div className="flex gap-4 mt-2">
-                                    {/* {
-                                        testCases!.map(tc=>(
-                                        <div>
-                                            <Button className='w-[4rem]'>
-
-                                            </Button>
-                                        </div>
-                                        ))
-                                    } */}
                                     <div className='flex flex-col'>
+                                        {
+                                            testCases && testCases.map((tc, index) => (
+                                                <div className='flex gap-4'>
+                                                    <div><Button onClick={() => changeTestCase(index)} className='w-[4rem]'>{`Case:- ${index + 1}`}</Button></div>
+                                                </div>
+                                            ))
+                                        }
+                                        <div>
+                                            <div>Input</div>
+                                            <Button className='w-[40rem]'>{testCases && testCases![testCaseIndex].input}</Button>
+                                            <div>output</div>
+                                            <Button className='w-[40rem]'>{testCases && testCases![testCaseIndex].output}</Button>
+                                        </div>
+                                    </div>
+                                    {/* <div className='flex flex-col'>
                                     <div className='flex gap-4'>
                                         <div><Button className='w-[4rem]'>Case: 1</Button></div>
                                         <div><Button className='w-[4rem]'>Case: 2</Button></div>
                                         <div><Button className='w-[4rem]'>Case: 3</Button></div>
                                     </div>
-                                    <div>
+                                    <div>     
                                         <div>Input</div>
                                         <Button className='w-[40rem]'>Input</Button>
                                         <div>output</div>
                                         <Button className='w-[40rem]'>output</Button>
                                     </div>
-                                    </div>
+                                    </div> */}
                                 </div>
 
                             </SheetContent>
