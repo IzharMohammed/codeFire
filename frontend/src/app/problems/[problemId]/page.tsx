@@ -229,8 +229,6 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                             height='86vh'
                             defaultLanguage={languageValue}
                             theme={themeName}
-                            // value={sourceCode}
-                            // onChange={(e) => setSourceCode(e.target.value)}
                             defaultValue="//start coding ..."
                             onMount={handleEditorDidMount}
                             onChange={handleEditorChange}
@@ -260,7 +258,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                                 <div className="flex gap-4 mt-2">
                                     <div className='flex flex-col'>
                                         {
-                                            testCases && testCases.map((tc, index) => (
+                                            testCases && testCases.map((_, index) => (
                                                 <div className='flex gap-4'>
                                                     <div><Button onClick={() => changeTestCase(index)} className='w-[4rem]'>{`Case:- ${index + 1}`}</Button></div>
                                                 </div>
