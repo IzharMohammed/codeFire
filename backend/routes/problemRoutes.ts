@@ -40,7 +40,8 @@ router.get('/:problemId', async (req: Request, res: Response) => {
             id: problemId
         },
         include: {
-            testCases: true
+            testCases: true,
+            template: true,
         }
     })
     console.log(problem);

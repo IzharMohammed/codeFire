@@ -40,28 +40,41 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     const [rightWidth, setRightWidth] = useState(50);
     const [upHeight, setUpHeight] = useState(70);
     const [downHeight, setDownHeight] = useState(30);
-    const [editorLeft, setEditorLeft] = useState(650);
-    const [tab, setTab] = useState('Description');
+    // const [editorLeft, setEditorLeft] = useState(650);
+    // const [tab, setTab] = useState('Description');
     const [testCaseIndex, setTestCaseIndex] = useState(0);
 
-    const [sourceCode, setSourceCode] = useState('');
-
-
-    const { loading, problem, error, testCases } = useProblem(problemId);
-    console.log(problem);
-
+    const { loading, problem, error, testCases, template } = useProblem(problemId);
+    
     const [languageValue, setLanguageValue] = useState(() => {
         const language = sessionStorage.getItem('language');
         return language ? language : 'javascript'
     });
 
+    const [starterCode, setStarterCode] = useState('');
+
+    const [sourceCode, setSourceCode] = useState('');
+    console.log(`starterCode:- ${starterCode}`);
+    
     const [themeName, setThemeName] = useState(() => {
         const theme = sessionStorage.getItem('theme');
         return theme ? theme : 'vs-dark'
     });
 
     useEffect(() => {
-        sessionStorage.setItem('language', languageValue)
+        sessionStorage.setItem('language', languageValue);
+        const languageId = (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '50')
+        
+        console.log(`template:- ${template}`);
+        template && template.map((temp) => {
+            if (temp.languageId === Number(languageId)) {
+                console.log(`starterCode:- ${temp.code}`);
+                setStarterCode(temp.code);
+            }
+        })
+        console.log('template:', template);
+        console.log('languageId:', languageId);
+
     }, [languageValue])
 
     useEffect(() => {
@@ -70,10 +83,10 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
 
 
     const problems1 = problem?.description ? DOMPurify.sanitize(problem.description) : '';
-    console.log(problems1);
+    // console.log(problems1);
 
     const problems = DOMPurify.sanitize(sampleProblems.problem1)
-    console.log(problems);
+    // console.log(problems);
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         console.log(e);
@@ -129,7 +142,6 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         setLanguageValue(lang);
     }
 
-
     const editorRef = useRef(null);
 
     function handleEditorDidMount(editor: any, monaco: any) {
@@ -165,7 +177,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         // console.log('response', response);
 
     }
-    console.log('test cases', testCases);
+    // console.log('test cases', testCases);
 
     const changeTestCase = (index: number) => {
         setTestCaseIndex(index);
@@ -229,7 +241,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                             height='86vh'
                             defaultLanguage={languageValue}
                             theme={themeName}
-                            defaultValue="//start coding ..."
+                            value={starterCode}
                             onMount={handleEditorDidMount}
                             onChange={handleEditorChange}
                         />
