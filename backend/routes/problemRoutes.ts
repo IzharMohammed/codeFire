@@ -13,13 +13,18 @@ interface CreateProblemBody {
     description: string;
     difficulty: string;
     testCases: TestCase[];
+    template: {
+        language: string;
+        code: string;
+        languageId: number;
+    }[];
 }
-  
+
 // Problem Routes
 router.get('/', async (req: Request, res: Response) => {
     // Retrieve all problems
     try {
-        const problems = await prisma.problems.findMany();
+        const problems = await prisma.problem.findMany();
         return res.json(problems);
     } catch (error) {
         console.log(`error:- ${error}`);
@@ -30,11 +35,11 @@ router.get('/', async (req: Request, res: Response) => {
 router.get('/:problemId', async (req: Request, res: Response) => {
     // Retrieve problem by ID
     const problemId = Number(req.params['problemId']);
-    const problem = await prisma.problems.findUnique({
+    const problem = await prisma.problem.findUnique({
         where: {
             id: problemId
         },
-        include:{
+        include: {
             testCases: true
         }
     })
@@ -44,10 +49,10 @@ router.get('/:problemId', async (req: Request, res: Response) => {
 
 router.post('/createproblem', async (req: Request<{}, {}, CreateProblemBody>, res: Response) => {
     //  Create a new problem
-    const { title, description, difficulty, testCases } = req.body;
+    const { title, description, difficulty, testCases, template } = req.body;
 
     try {
-        const problem = await prisma.problems.create({
+        const problem = await prisma.problem.create({
             data: {
                 title,
                 difficulty,
@@ -57,9 +62,17 @@ router.post('/createproblem', async (req: Request<{}, {}, CreateProblemBody>, re
                         input: tc.input,
                         output: tc.output,
                     }))
+                },
+                template: {
+                    create: template.map((tc) => ({
+                        language: tc.language,
+                        code: tc.code,
+                        languageId: tc.languageId
+                    }))
                 }
-            }
+            },
         })
+
 
         console.log(`${JSON.stringify(problem)} added`);
 
@@ -74,7 +87,7 @@ router.post('/createproblem', async (req: Request<{}, {}, CreateProblemBody>, re
 router.post('/updateproblem', async (req: Request, res: Response) => {
     const { id, description } = req.body;
     try {
-        await prisma.problems.update({
+        await prisma.problem.update({
             where: {
                 id
             },
@@ -82,7 +95,7 @@ router.post('/updateproblem', async (req: Request, res: Response) => {
                 description
             }
         })
-        return res.json({msg: `${id} updated successfully`})
+        return res.json({ msg: `${id} updated successfully` })
     } catch (error) {
         console.log(`error:- ${error}`);
         return res.json({ msg: `Error in adding of the problem :- ${error}` });
