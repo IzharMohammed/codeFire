@@ -31,6 +31,7 @@ import themes from '@/constants/themes';
 import axios from 'axios';
 import useProblem from '@/hooks/useProblem';
 import { useSearchParams } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 
 function page({ params: { problemId } }: { params: { problemId: number } }) {
@@ -46,7 +47,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     const [testCaseIndex, setTestCaseIndex] = useState(0);
 
     const { loading, problem, error, testCases, template } = useProblem(problemId);
-    
+
     const [languageValue, setLanguageValue] = useState(() => {
         const language = sessionStorage.getItem('language');
         return language ? language : 'javascript'
@@ -56,7 +57,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
 
     const [sourceCode, setSourceCode] = useState('');
     console.log(`starterCode:- ${starterCode}`);
-    
+
     const [themeName, setThemeName] = useState(() => {
         const theme = sessionStorage.getItem('theme');
         return theme ? theme : 'vs-dark'
@@ -65,7 +66,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     useEffect(() => {
         sessionStorage.setItem('language', languageValue);
         const languageId = (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '50')
-        
+
         console.log(`template:- ${template}`);
         template && template.map((temp) => {
             if (temp.languageId === Number(languageId)) {
@@ -158,9 +159,9 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         console.log(`value',${value}`);
         setSourceCode(value);
     }
-    
+
     // const problemId = useSearchParams().get('problemId');
-    
+
     async function submitSolution() {
         console.log('lh');
 
@@ -170,9 +171,16 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
             language_id: (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '54'),
             problemId
         })
-        const stdout = response.data.msg.stdout;
+        // const stdout = response.data.msg.stdout;
+        // console.log(`stdout: ${stdout}, status ${status}`);
         const status = response.data.msg.status.description;
-        console.log(`stdout: ${stdout}, status ${status}`);
+        console.log(`status:- ${JSON.stringify(response.data.status)}`);
+        
+        if (status === 'Accepted') {
+            toast.success('Accepted...!!!');
+        } else if (status === 'Rejected') {
+            toast.error('Rejected...!!!');
+        }
 
         // console.log('response', response);
 

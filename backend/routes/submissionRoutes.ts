@@ -13,14 +13,14 @@ router.post('/', async (req: Request, res: Response) => {
     // Submit a solution
     console.log(req.body);
 
-    
-    const { source_code, language_id,problemId } = req.body;
-    
+
+    const { source_code, language_id, problemId } = req.body;
+
     const stdin = await prisma.problem.findUnique({
         where: {
-           id: Number(problemId) 
+            id: Number(problemId)
         },
-        include:{
+        include: {
             testCases: true,
         }
     })
@@ -34,16 +34,46 @@ router.post('/', async (req: Request, res: Response) => {
     console.log('token from judge0', respone.data.token);
 
     const token = respone.data.token;
+    const result = await pollingResponseFromJudge0(token);
 
-    const response = await axios.get(`${process.env.JUDGE0_URL}/submissions/${token}`);
-
-    console.log(`response from judge0:- ${JSON.stringify(response.data)}`);
+    console.log(`response from judge0:- ${JSON.stringify(result)}`);
     // const stdout = respone.data.stdout;
-    // const description = respone.data.status.description;
     // return res.json({ msg:respone.data.token})
 
-    return res.json({ msg: response.data })
+    return res.json({ msg: result });
 });
+
+const pollingResponseFromJudge0 = async (token: string) => {
+
+    let status = { id: 1 };
+    const interval = 2000;
+    const maxWaitTime = 15000;
+    const startTime = Date.now();
+    let result = null;
+
+    while (status.id <= 2) {
+
+        if (Date.now() - startTime > maxWaitTime) {
+            throw new Error("Timeout: Submission is still in queue");
+        }
+
+        const response = await axios.get(`${process.env.JUDGE0_URL}/submissions/${token}`);
+        result = response.data;
+        status = response.data.status;
+        console.log(`result:- ${JSON.stringify(result)}`);
+        
+        console.log('status',status.id);
+        
+        if (status.id > 2) {
+            break;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, interval))
+    }
+
+    return result;
+
+}
 
 router.get('/:submissionId', (req: Request, res: Response) => {
     // Get submission details by ID
