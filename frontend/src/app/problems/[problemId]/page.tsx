@@ -30,6 +30,7 @@ import languages from '@/constants/languages';
 import themes from '@/constants/themes';
 import axios from 'axios';
 import useProblem from '@/hooks/useProblem';
+import { useSearchParams } from 'next/navigation';
 
 
 function page({ params: { problemId } }: { params: { problemId: number } }) {
@@ -157,18 +158,17 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         console.log(`value',${value}`);
         setSourceCode(value);
     }
-
+    
+    // const problemId = useSearchParams().get('problemId');
+    
     async function submitSolution() {
         console.log('lh');
 
+
         const response = await axios.post(`http://localhost:4000/api/v1/submissions/`, {
             source_code: sourceCode,
-            language_id: (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '50'),
-            stdin: `
-           1 2 3 4 5 6 7
-           3
-            `,
-            expected_output: "5 6 7 1 2 3 4"
+            language_id: (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '54'),
+            problemId
         })
         const stdout = response.data.msg.stdout;
         const status = response.data.msg.status.description;

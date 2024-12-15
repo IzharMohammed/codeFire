@@ -53,7 +53,7 @@ const useProblem = (id: number) => {
         loading,
         testCases,
         problem,
-        template,
+    template,
         error
     };
 };
