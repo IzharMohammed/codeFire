@@ -174,15 +174,17 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         // const stdout = response.data.msg.stdout;
         // console.log(`stdout: ${stdout}, status ${status}`);
         // const status = response.data.msg.status.description;
-        console.log(`response:- ${response}`);
+        console.log(JSON.stringify(response.data.msg));
         
-        console.log(`status:- ${JSON.stringify(response.data.status)}`);
+        console.log(`response:- ${response.data.msg.map((status: any)=>status.status.description==="Accepted")}`);
+        const status = response.data.msg.map((status: any)=>status.status.description==="Accepted");
+        // console.log(`status:- ${JSON.stringify(response.data.status)}`);
         
-        // if (status === 'Accepted') {
-        //     toast.success('Accepted...!!!');
-        // } else {
-        //     toast.error('Rejected...!!!');
-        // }
+        if (status) {
+            toast.success('Accepted...!!!');
+        } else {
+            toast.error('Rejected...!!!');
+        }
 
         // console.log('response', response);
 

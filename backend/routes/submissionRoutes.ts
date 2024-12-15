@@ -44,6 +44,7 @@ router.post('/', async (req: Request, res: Response) => {
     const token = respone.data;
     const result = await pollingResponseFromJudge0(token);
 
+
     console.log(`response from judge0:- ${JSON.stringify(result)}`);
     // const stdout = respone.data.stdout;
     // return res.json({ msg:respone.data.token})
@@ -55,13 +56,13 @@ router.post('/', async (req: Request, res: Response) => {
 const pollingResponseFromJudge0 = async (token: any) => {
 
     const interval = 2000;
-    const maxWaitTime = 30000;
+    const maxWaitTime = 50000;
     const startTime = Date.now();
     let result = null;
 
     let submissionSuccessful = false;
 
-    const allTokens = token.map((tk: any) => tk.token).join(',');
+    const allTokens = token.map((tk: { token: string }) => tk.token).join(',');
 
     while (!submissionSuccessful) {
 
@@ -70,9 +71,9 @@ const pollingResponseFromJudge0 = async (token: any) => {
         }
 
         const response = await axios.get(`${process.env.JUDGE0_URL}/submissions/batch?tokens=${allTokens}`);
-       
+
         result = response.data;
-        
+
 
         console.log(`result:- ${JSON.stringify(result.submissions)}`);
 
