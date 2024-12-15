@@ -173,14 +173,16 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         })
         // const stdout = response.data.msg.stdout;
         // console.log(`stdout: ${stdout}, status ${status}`);
-        const status = response.data.msg.status.description;
+        // const status = response.data.msg.status.description;
+        console.log(`response:- ${response}`);
+        
         console.log(`status:- ${JSON.stringify(response.data.status)}`);
         
-        if (status === 'Accepted') {
-            toast.success('Accepted...!!!');
-        } else if (status === 'Rejected') {
-            toast.error('Rejected...!!!');
-        }
+        // if (status === 'Accepted') {
+        //     toast.success('Accepted...!!!');
+        // } else {
+        //     toast.error('Rejected...!!!');
+        // }
 
         // console.log('response', response);
 

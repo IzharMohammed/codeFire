@@ -16,7 +16,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     const { source_code, language_id, problemId } = req.body;
 
-    const stdin = await prisma.problem.findUnique({
+    const response = await prisma.problem.findUnique({
         where: {
             id: Number(problemId)
         },
@@ -24,16 +24,24 @@ router.post('/', async (req: Request, res: Response) => {
             testCases: true,
         }
     })
+    console.log(`stdIn:- ${JSON.stringify(response?.testCases[0].input)}`);
+    const stdin = response?.testCases[0].input;
+    const inputArray = response?.testCases.map(testCase => testCase.input);
 
-    const respone = await axios.post(`${process.env.JUDGE0_URL}/submissions/`, {
-        source_code,
-        language_id,
-        stdin
+    const submissions = response?.testCases.map(testCase => ({
+        source_code: source_code,
+        language_id: language_id,
+        stdin: testCase.input
+    }))
+
+    console.log(submissions);
+    const respone = await axios.post(`${process.env.JUDGE0_URL}/submissions/batch`, {
+        submissions
     })
 
-    console.log('token from judge0', respone.data.token);
+    console.log('token from judge0', respone.data);
 
-    const token = respone.data.token;
+    const token = respone.data;
     const result = await pollingResponseFromJudge0(token);
 
     console.log(`response from judge0:- ${JSON.stringify(result)}`);
@@ -41,30 +49,40 @@ router.post('/', async (req: Request, res: Response) => {
     // return res.json({ msg:respone.data.token})
 
     return res.json({ msg: result });
+    // return res.json({ msg: 'izhar' })
 });
 
-const pollingResponseFromJudge0 = async (token: string) => {
+const pollingResponseFromJudge0 = async (token: any) => {
 
-    let status = { id: 1 };
     const interval = 2000;
-    const maxWaitTime = 15000;
+    const maxWaitTime = 30000;
     const startTime = Date.now();
     let result = null;
 
-    while (status.id <= 2) {
+    let submissionSuccessful = false;
+
+    const allTokens = token.map((tk: any) => tk.token).join(',');
+
+    while (!submissionSuccessful) {
 
         if (Date.now() - startTime > maxWaitTime) {
             throw new Error("Timeout: Submission is still in queue");
         }
 
-        const response = await axios.get(`${process.env.JUDGE0_URL}/submissions/${token}`);
+        const response = await axios.get(`${process.env.JUDGE0_URL}/submissions/batch?tokens=${allTokens}`);
+       
         result = response.data;
-        status = response.data.status;
-        console.log(`result:- ${JSON.stringify(result)}`);
         
-        console.log('status',status.id);
-        
-        if (status.id > 2) {
+
+        console.log(`result:- ${JSON.stringify(result.submissions)}`);
+
+        const submissions = result.submissions;
+
+        submissionSuccessful = submissions.every((sub: any) => sub.status.id > 2);
+        // console.log('status', status.id);
+
+        if (submissionSuccessful) {
+            result = result.submissions;
             break;
         }
 
