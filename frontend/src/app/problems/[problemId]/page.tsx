@@ -32,6 +32,7 @@ import axios from 'axios';
 import useProblem from '@/hooks/useProblem';
 import { useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
+import useTestValidator from '@/hooks/useTestValidator';
 
 
 function page({ params: { problemId } }: { params: { problemId: number } }) {
@@ -47,7 +48,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     const [testCaseIndex, setTestCaseIndex] = useState(0);
 
     const { loading, problem, error, testCases, template } = useProblem(problemId);
-
+                                                            
     const [languageValue, setLanguageValue] = useState(() => {
         const language = sessionStorage.getItem('language');
         return language ? language : 'javascript'
@@ -175,12 +176,18 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         // console.log(`stdout: ${stdout}, status ${status}`);
         // const status = response.data.msg.status.description;
         console.log(JSON.stringify(response.data.msg));
+
+        // response.data.msg.map()
+        console.log(`testCases:- ${testCases}`);
+        
         
         console.log(`response:- ${response.data.msg.map((status: any)=>status.status.description==="Accepted")}`);
         const status = response.data.msg.map((status: any)=>status.status.description==="Accepted");
         // console.log(`status:- ${JSON.stringify(response.data.status)}`);
-        
-        if (status) {
+
+            useTestValidator(problemId);
+
+            if (status) {
             toast.success('Accepted...!!!');
         } else {
             toast.error('Rejected...!!!');

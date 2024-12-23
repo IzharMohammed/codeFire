@@ -24,9 +24,12 @@ router.post('/', async (req: Request, res: Response) => {
             testCases: true,
         }
     })
+
     console.log(`stdIn:- ${JSON.stringify(response?.testCases[0].input)}`);
-    const stdin = response?.testCases[0].input;
-    const inputArray = response?.testCases.map(testCase => testCase.input);
+
+    const testCases = response?.testCases.map(tc => {
+            console.log(tc.output);
+    })
 
     const submissions = response?.testCases.map(testCase => ({
         source_code: source_code,
@@ -46,11 +49,8 @@ router.post('/', async (req: Request, res: Response) => {
 
 
     console.log(`response from judge0:- ${JSON.stringify(result)}`);
-    // const stdout = respone.data.stdout;
-    // return res.json({ msg:respone.data.token})
 
     return res.json({ msg: result });
-    // return res.json({ msg: 'izhar' })
 });
 
 const pollingResponseFromJudge0 = async (token: any) => {

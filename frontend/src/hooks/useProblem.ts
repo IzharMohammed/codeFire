@@ -48,12 +48,12 @@ const useProblem = (id: number) => {
         fetchProblem();
     }, [id]); // Add `id` as a dependency so it re-fetches if `id` changes
     console.log(`template:- ${JSON.stringify(template)}`);
-    
+
     return {
         loading,
         testCases,
         problem,
-    template,
+        template,
         error
     };
 };
