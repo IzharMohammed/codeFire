@@ -439,58 +439,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
 
                     {/* <div className='border border-gray-600 w-full h-3 cursor-row-resize' onMouseDown={handleMouseUpDown} ></div> */}
 
-                    <div className='w-full relative ' >
-
-                        {/* <Sheet >
-                            <SheetTrigger asChild>
-                                <Button className=' w-[6rem]  absolute bottom-4 left-2' >Test cases</Button>
-                            </SheetTrigger>
-                            <SheetContent side={"bottom"}
-                                style={{
-                                    width: `${rightWidth}%`,
-                                    right: 0,
-                                    left: 'auto',
-                                    position: 'absolute'
-                                }}
-                            >
-                                <SheetHeader>
-                                    <SheetTitle>Test cases</SheetTitle>
-                                </SheetHeader>
-                                <div className="flex gap-4 mt-2">
-                                    <div className='flex flex-col'>
-                                        {
-                                            testCases && testCases.map((_, index) => (
-                                                <div className='flex gap-4'>
-                                                    <div><Button onClick={() => changeTestCase(index)} className='w-[4rem]'>{`Case:- ${index + 1}`}</Button></div>
-                                                </div>
-                                            ))
-                                        }
-                                        <div>
-                                            <div>Input</div>
-                                            <Button className='w-[40rem]'>{testCases && testCases![testCaseIndex].input}</Button>
-                                            <div>output</div>
-                                            <Button className='w-[40rem]'>{testCases && testCases![testCaseIndex].output}</Button>
-                                        </div>
-                                    </div>
-                                    {/* <div className='flex flex-col'>
-                                    <div className='flex gap-4'>
-                                        <div><Button className='w-[4rem]'>Case: 1</Button></div>
-                                        <div><Button className='w-[4rem]'>Case: 2</Button></div>
-                                        <div><Button className='w-[4rem]'>Case: 3</Button></div>
-                                    </div>
-                                    <div>     
-                                        <div>Input</div>
-                                        <Button className='w-[40rem]'>Input</Button>
-                                        <div>output</div>
-                                        <Button className='w-[40rem]'>output</Button>
-                                    </div>
-                                    </div> 
-                                </div>
-
-                            </SheetContent>
-                        </Sheet> */}
-
-                    </div>
+                   
                 </div>
 
             </div>
