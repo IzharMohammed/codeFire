@@ -33,7 +33,9 @@ import useProblem from '@/hooks/useProblem';
 import { useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import useTestValidator from '@/hooks/useTestValidator';
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CheckCircle, XCircle } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
 
 function page({ params: { problemId } }: { params: { problemId: number } }) {
 
@@ -48,7 +50,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     const [testCaseIndex, setTestCaseIndex] = useState(0);
 
     const { loading, problem, error, testCases, template } = useProblem(problemId);
-                                                            
+
     const [languageValue, setLanguageValue] = useState(() => {
         const language = sessionStorage.getItem('language');
         return language ? language : 'javascript'
@@ -179,15 +181,15 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
 
         // response.data.msg.map()
         console.log(`testCases:- ${testCases}`);
-        
-        
-        console.log(`response:- ${response.data.msg.map((status: any)=>status.status.description==="Accepted")}`);
-        const status = response.data.msg.map((status: any)=>status.status.description==="Accepted");
+
+
+        console.log(`response:- ${response.data.msg.map((status: any) => status.status.description === "Accepted")}`);
+        const status = response.data.msg.map((status: any) => status.status.description === "Accepted");
         // console.log(`status:- ${JSON.stringify(response.data.status)}`);
 
-            useTestValidator(problemId);
+        useTestValidator(problemId);
 
-            if (status) {
+        if (status) {
             toast.success('Accepted...!!!');
         } else {
             toast.error('Rejected...!!!');
@@ -216,7 +218,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                 <div className='border border-gray-600 w-2 cursor-col-resize' onMouseDown={handleMouseDown} ></div>
 
                 <div className='h-[calc(100vh-66px)] w-[55rem]' style={{ width: `${rightWidth}%` }}>
-                    <div className='flex'>
+                    <div className='flex gap-4'>
                         <div className='border'>
                             <Select onValueChange={handleLanguage}>
                                 <SelectTrigger className="w-[140px]">
@@ -252,18 +254,186 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                         <div>
                             <Button onClick={submitSolution}>Run</Button>
                         </div>
+                        <div>
+                            <Sheet >
+                                <SheetTrigger asChild>
+                                    <Button className=' w-[6rem]  absolute bottom-4 left-2' >Test cases</Button>
+                                </SheetTrigger>
+                                <SheetContent side={"bottom"}
+                                    style={{
+                                        width: `${rightWidth}%`,
+                                        right: 0,
+                                        left: 'auto',
+                                        position: 'absolute'
+                                    }}
+                                >
+                                    <SheetHeader>
+                                        <SheetTitle>Test cases</SheetTitle>
+                                    </SheetHeader>
+                                    <div className="flex gap-4 mt-2">
+                                        <div className='flex flex-col'>
+                                            {
+                                                testCases && testCases.map((_, index) => (
+                                                    <div className='flex gap-4'>
+                                                        <div><Button onClick={() => changeTestCase(index)} className='w-[4rem]'>{`Case:- ${index + 1}`}</Button></div>
+                                                    </div>
+                                                ))
+                                            }
+                                            <div>
+                                                <div>Input</div>
+                                                <Button className='w-[40rem]'>{testCases && testCases![testCaseIndex].input}</Button>
+                                                <div>output</div>
+                                                <Button className='w-[40rem]'>{testCases && testCases![testCaseIndex].output}</Button>
+                                            </div>
+                                        </div>
+                                        {/* <div className='flex flex-col'>
+                                    <div className='flex gap-4'>
+                                        <div><Button className='w-[4rem]'>Case: 1</Button></div>
+                                        <div><Button className='w-[4rem]'>Case: 2</Button></div>
+                                        <div><Button className='w-[4rem]'>Case: 3</Button></div>
+                                    </div>
+                                    <div>     
+                                        <div>Input</div>
+                                        <Button className='w-[40rem]'>Input</Button>
+                                        <div>output</div>
+                                        <Button className='w-[40rem]'>output</Button>
+                                    </div>
+                                    </div> */}
+                                    </div>
+
+                                </SheetContent>
+                            </Sheet>
+                        </div>
                     </div>
-                    <div >
+                    <div className='mt-2' >
+                        <Tabs defaultValue="code">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="code">Code</TabsTrigger>
+                                <TabsTrigger value="submissions">Submissions</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="code">
+                                <Editor
+                                    height='80vh'
+                                    defaultLanguage={languageValue}
+                                    theme={themeName}
+                                    value={starterCode}
+                                    onMount={handleEditorDidMount}
+                                    onChange={handleEditorChange}
+                                />
+                            </TabsContent>
+                            <TabsContent value="submissions">
+                                <div className="h-[500px] overflow-y-auto">
+                                    <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
+                                        <div className='flex justify-between'>
+                                            <div className='text-xl font-bold'>Submission submission-1734986714559</div>
+                                            <Badge
+                                                variant='success' 
+                                            >
+                                                Accepted
+                                            </Badge>
+                                        </div>
+                                        <div className='flex flex-col gap-3'>
+                                            <div className='flex gap-2'>
+                                                <CheckCircle className="text-green-500 h-5 w-5" />
+                                                <div> 3/3 test cases passed</div>
+                                            </div>
+                                            <div className='flex  justify-between '>
+                                                <div >
+                                                    <div>Language: javascript</div>
+                                                    <div>Memory: 31 MB</div>
+                                                </div>
+                                                <div >
+                                                    <div> Runtime: 16 ms</div>
+                                                    <div>Submitted: 12/24/2024, 2:15:14 AM</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
+                                        <div className='flex justify-between'>
+                                            <div className='text-xl font-bold'>Submission submission-1734986714559</div>
+                                            <Badge
+                                                variant='destructive' 
+                                            >
+                                                wrong answer
+                                            </Badge>
+                                        </div>
+                                        <div className='flex flex-col gap-3'>
+                                            <div className='flex gap-2'>
+                                                <XCircle className="text-red-500 h-5 w-5" />
+                                                <div> 3/3 test cases passed</div>
+                                            </div>
+                                            <div className='flex  justify-between '>
+                                                <div >
+                                                    <div>Language: javascript</div>
+                                                    <div>Memory: 31 MB</div>
+                                                </div>
+                                                <div >
+                                                    <div> Runtime: 16 ms</div>
+                                                    <div>Submitted: 12/24/2024, 2:15:14 AM</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                        <Editor
-                            height='86vh'
-                            defaultLanguage={languageValue}
-                            theme={themeName}
-                            value={starterCode}
-                            onMount={handleEditorDidMount}
-                            onChange={handleEditorChange}
-                        />
+                                    <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
+                                        <div className='flex justify-between'>
+                                            <div className='text-xl font-bold'>Submission submission-1734986714559</div>
+                                            <Badge
+                                                variant='success' 
+                                            >
+                                                Accepted
+                                            </Badge>
+                                        </div>
+                                        <div className='flex flex-col gap-3'>
+                                            <div className='flex gap-2'>
+                                                <CheckCircle className="text-green-500 h-5 w-5" />
+                                                <div> 3/3 test cases passed</div>
+                                            </div>
+                                            <div className='flex  justify-between '>
+                                                <div >
+                                                    <div>Language: javascript</div>
+                                                    <div>Memory: 31 MB</div>
+                                                </div>
+                                                <div >
+                                                    <div> Runtime: 16 ms</div>
+                                                    <div>Submitted: 12/24/2024, 2:15:14 AM</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
+                                        <div className='flex justify-between'>
+                                            <div className='text-xl font-bold'>Submission submission-1734986714559</div>
+                                            <Badge
+                                                variant='destructive' 
+                                            >
+                                                wrong answer
+                                            </Badge>
+                                        </div>
+                                        <div className='flex flex-col gap-3'>
+                                            <div className='flex gap-2'>
+                                                <XCircle className="text-red-500 h-5 w-5" />
+                                                <div> 3/3 test cases passed</div>
+                                            </div>
+                                            <div className='flex  justify-between '>
+                                                <div >
+                                                    <div>Language: javascript</div>
+                                                    <div>Memory: 31 MB</div>
+                                                </div>
+                                                <div >
+                                                    <div> Runtime: 16 ms</div>
+                                                    <div>Submitted: 12/24/2024, 2:15:14 AM</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </TabsContent>
+                        </Tabs>
 
                     </div>
 
@@ -271,7 +441,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
 
                     <div className='w-full relative ' >
 
-                        <Sheet >
+                        {/* <Sheet >
                             <SheetTrigger asChild>
                                 <Button className=' w-[6rem]  absolute bottom-4 left-2' >Test cases</Button>
                             </SheetTrigger>
@@ -314,11 +484,11 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                                         <div>output</div>
                                         <Button className='w-[40rem]'>output</Button>
                                     </div>
-                                    </div> */}
+                                    </div> 
                                 </div>
 
                             </SheetContent>
-                        </Sheet>
+                        </Sheet> */}
 
                     </div>
                 </div>
