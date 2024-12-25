@@ -33,7 +33,8 @@ model Template {
   id         Int     @id @default(autoincrement())
   language   String
   languageId Int
-  code       String
+  starterCode       String
+  stdInRetrievalCode String
   problem    Problem @relation(fields: [problemId], references: [id])
   problemId  Int
 }
