@@ -166,9 +166,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     // const problemId = useSearchParams().get('problemId');
 
     async function submitSolution() {
-        console.log('lh');
-
-
+        console.log('submitting...');
         const response = await axios.post(`http://localhost:4000/api/v1/submissions/`, {
             source_code: sourceCode,
             language_id: (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '54'),
@@ -177,17 +175,15 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         // const stdout = response.data.msg.stdout;
         // console.log(`stdout: ${stdout}, status ${status}`);
         // const status = response.data.msg.status.description;
-        console.log(JSON.stringify(response.data.msg));
+        console.log(JSON.stringify(response.data.testCaseCount));
 
         // response.data.msg.map()
         console.log(`testCases:- ${testCases}`);
 
 
-        console.log(`response:- ${response.data.msg.map((status: any) => status.status.description === "Accepted")}`);
-        const status = response.data.msg.map((status: any) => status.status.description === "Accepted");
+        // console.log(`response:- ${response.data.msg.map((status: any) => status.status.description === "Accepted")}`);
+        // const status = response.data.msg.map((status: any) => status.status.description === "Accepted");
         // console.log(`status:- ${JSON.stringify(response.data.status)}`);
-
-        useTestValidator(problemId);
 
         if (status) {
             toast.success('Accepted...!!!');

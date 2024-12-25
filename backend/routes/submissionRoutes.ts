@@ -2,10 +2,13 @@ import { Request, Response } from "express";
 import { authMiddleware } from "../middleware/authMiddleware";
 import axios from 'axios';
 import prisma from "../lib/db";
+import { any } from "zod";
 
 const Router = require("express");
 
 const router = Router();
+
+type Judge0Results = Judge0Result[];
 
 
 // Submissions Routes
@@ -13,23 +16,11 @@ router.post('/', async (req: Request, res: Response) => {
     // Submit a solution
     console.log(req.body);
 
-
     const { source_code, language_id, problemId } = req.body;
 
-    const response = await prisma.problem.findUnique({
-        where: {
-            id: Number(problemId)
-        },
-        include: {
-            testCases: true,
-        }
-    })
+    const response = await fetchProblemDetails(problemId);
 
     console.log(`stdIn:- ${JSON.stringify(response?.testCases[0].input)}`);
-
-    const testCases = response?.testCases.map(tc => {
-            console.log(tc.output);
-    })
 
     const submissions = response?.testCases.map(testCase => ({
         source_code: source_code,
@@ -45,13 +36,103 @@ router.post('/', async (req: Request, res: Response) => {
     console.log('token from judge0', respone.data);
 
     const token = respone.data;
-    const result = await pollingResponseFromJudge0(token);
 
+    const result = await pollingResponseFromJudge0(token);
 
     console.log(`response from judge0:- ${JSON.stringify(result)}`);
 
-    return res.json({ msg: result });
+    const testCaseCount = await validateTestCases(result, problemId);
+    console.log(`testCaseCount:-${testCaseCount}`);
+
+    await saveSubmission(result, problemId, language_id);
+    return res.json({ msg: result, testCaseCount });
 });
+
+interface Judge0Result {
+    status: {
+        id: number;
+        description: string;
+    };
+    stdout: string;
+    stderr: string | null;
+    compile_output: string | null;
+    time: string | null;
+    memory: number | null;
+    token: string;
+}
+
+interface Submission {
+    userId: number;
+    problemId: number;
+    languageId: number;
+    status: "ACCEPTED" | "WRONG ANSWER";
+    result: any;
+    memory: number;
+    time: number;
+    createdAt: Date;
+}
+
+const saveSubmission = async (result: Judge0Results, problemId: number, language_id: number) => {
+    const memory = (result[0].memory! + result[1].memory! + result[2].memory!) / 3;
+    const time = (parseFloat(result[0].time || '0') + parseFloat(result[0].time || '0') + parseFloat(result[0].time || '0')) / 3;
+
+    // const submission: Submission = {
+    //     memory,
+    //     createdAt: Date.now(),
+    //     problemId,
+    //     time,
+    //     result,
+
+    // }
+
+    // try {
+    //     await prisma.submission.create({
+    //         data: submission
+    //     })
+    // } catch (error) {
+    //     console.error("Error saving submission:", error);
+    //     throw new Error("Failed to save submission");
+    // }
+
+
+
+}
+
+
+const fetchProblemDetails = async (problemId: number) => {
+    return await prisma.problem.findUnique({
+        where: {
+            id: Number(problemId)
+        },
+        include: {
+            testCases: true,
+        }
+    })
+}
+
+const validateTestCases = async (result: Judge0Results, problemId: number): Promise<number> => {
+    const response1 = await fetchProblemDetails(problemId);
+
+    console.log(`stdIn:- ${JSON.stringify(response1?.testCases[0].input)}`);
+
+    let testCaseCount = 0;
+    console.log(`response1?.testCases.length:- ${response1?.testCases.length}`);
+
+    for (let i = 0; i < response1?.testCases.length!; i++) {
+        const expectedOutput = JSON.stringify(response1?.testCases[i].output);
+        const actualOutput = JSON.stringify((result[i].stdout.trim())); // Parse stdout and then stringify
+
+        console.log(`expectedOutput: ${expectedOutput}`);
+        console.log(`actualOutput: ${actualOutput}`);
+
+        if (expectedOutput === actualOutput) {
+            console.log('Inside for loop - Test case passed');
+            testCaseCount++;
+        }
+    }
+
+    return testCaseCount;
+}
 
 const pollingResponseFromJudge0 = async (token: any) => {
 
