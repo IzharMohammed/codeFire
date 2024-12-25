@@ -36,6 +36,7 @@ import useTestValidator from '@/hooks/useTestValidator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, XCircle } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
+import { useSession } from 'next-auth/react';
 
 function page({ params: { problemId } }: { params: { problemId: number } }) {
 
@@ -164,13 +165,17 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     }
 
     // const problemId = useSearchParams().get('problemId');
-
+    const { data: session, status } = useSession();
+    // console.log(`session from client:- ${JSON.stringify(session?.user.id)}`);
+    
     async function submitSolution() {
         console.log('submitting...');
         const response = await axios.post(`http://localhost:4000/api/v1/submissions/`, {
+            id: session?.user?.id,
             source_code: sourceCode,
             language_id: (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '54'),
-            problemId
+            problemId,
+            usersEmail: session?.user?.email
         })
         // const stdout = response.data.msg.stdout;
         // console.log(`stdout: ${stdout}, status ${status}`);

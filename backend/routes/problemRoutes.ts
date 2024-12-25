@@ -2,23 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../lib/db";
 const Router = require("express")
 const router = Router();
-
-interface TestCase {
-    input: string,
-    output: string,
-}
-
-interface CreateProblemBody {
-    title: string;
-    description: string;
-    difficulty: string;
-    testCases: TestCase[];
-    template: {
-        language: string;
-        code: string;
-        languageId: number;
-    }[];
-}
+import { TestCase, CreateProblemBody } from "../types/problem";
 
 // Problem Routes
 router.get('/', async (req: Request, res: Response) => {

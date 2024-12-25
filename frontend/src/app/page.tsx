@@ -17,6 +17,7 @@ interface Problem {
 export default async function Home() {
 
   const session = await getServerSession(NEXT_AUTH);
+  console.log(`session:- ${session}`);
   
   
   const response = await axios.get('http://localhost:4000/api/v1/problems/');

@@ -2,21 +2,19 @@ import { Request, Response } from "express";
 import { authMiddleware } from "../middleware/authMiddleware";
 import axios from 'axios';
 import prisma from "../lib/db";
-import { any } from "zod";
+import { Submission,Judge0Result,Judge0Results } from "../types/submission";
 
 const Router = require("express");
 
+
 const router = Router();
-
-type Judge0Results = Judge0Result[];
-
 
 // Submissions Routes
 router.post('/', async (req: Request, res: Response) => {
     // Submit a solution
     console.log(req.body);
 
-    const { source_code, language_id, problemId } = req.body;
+    const { source_code, language_id, problemId, usersEmail, id } = req.body;
 
     const response = await fetchProblemDetails(problemId);
 
@@ -44,58 +42,62 @@ router.post('/', async (req: Request, res: Response) => {
     const testCaseCount = await validateTestCases(result, problemId);
     console.log(`testCaseCount:-${testCaseCount}`);
 
-    await saveSubmission(result, problemId, language_id);
+    await saveSubmission(result, problemId, language_id, usersEmail, testCaseCount, source_code, id);
     return res.json({ msg: result, testCaseCount });
 });
 
-interface Judge0Result {
-    status: {
-        id: number;
-        description: string;
-    };
-    stdout: string;
-    stderr: string | null;
-    compile_output: string | null;
-    time: string | null;
-    memory: number | null;
-    token: string;
+
+
+function getFormattedDateTime() {
+    const now = new Date();
+
+    const date = now.toLocaleDateString("en-US");
+    const time = now.toLocaleTimeString("en-US");
+
+    return `${date}, ${time}`;
 }
 
-interface Submission {
-    userId: number;
-    problemId: number;
-    languageId: number;
-    status: "ACCEPTED" | "WRONG ANSWER";
-    result: any;
-    memory: number;
-    time: number;
-    createdAt: Date;
-}
+const saveSubmission = async (
+    result: Judge0Results,
+    problemId: number,
+    language_id: number,
+    usersEmail: string,
+    testCaseCount: number,
+    source_code: string,
+    id: number
+) => {
 
-const saveSubmission = async (result: Judge0Results, problemId: number, language_id: number) => {
-    const memory = (result[0].memory! + result[1].memory! + result[2].memory!) / 3;
-    const time = (parseFloat(result[0].time || '0') + parseFloat(result[0].time || '0') + parseFloat(result[0].time || '0')) / 3;
+    // const memory = (result[0].memory! + result[1].memory! + result[2].memory!) / 3;
+    // const time = (parseFloat(result[0].time || '0') + parseFloat(result[0].time || '0') + parseFloat(result[0].time || '0')) / 3;
+    const memory = result.reduce((sum, res) => sum + (res.memory || 0), 0) / result.length;
+    const time = result.reduce((sum, res) => sum + parseFloat(res.time || '0'), 0) / result.length;
+    console.log(`memory :- ${memory} time:- ${time}`);
 
-    // const submission: Submission = {
-    //     memory,
-    //     createdAt: Date.now(),
-    //     problemId,
-    //     time,
-    //     result,
+    const createdAt = getFormattedDateTime();
+    const submission: Submission = {
+        email: usersEmail,
+        memory,
+        time,
+        result,
+        createdAt,
+        code: source_code,
+        languageId: language_id,
+        status: (testCaseCount == 3 ? 'ACCEPTED' : 'WRONG ANSWER'),
+        userId: id,
+        problemId,
+    }
 
-    // }
+    try {
+        const savedSubmission = await prisma.submission.create({
+            data: submission
+        })
 
-    // try {
-    //     await prisma.submission.create({
-    //         data: submission
-    //     })
-    // } catch (error) {
-    //     console.error("Error saving submission:", error);
-    //     throw new Error("Failed to save submission");
-    // }
+        return savedSubmission;
 
-
-
+    } catch (error) {
+        console.error("Error saving submission:", error);
+        throw new Error("Failed to save submission");
+    }
 }
 
 

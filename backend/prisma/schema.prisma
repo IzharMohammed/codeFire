@@ -47,16 +47,19 @@ model Template {
 // }
 
 model Submission {
-  id        Int              @id @default(autoincrement())
-  user      User             @relation(fields: [userId], references: [id])
-  userId    Int
-  problem   Problem          @relation(fields: [problemId], references: [id])
-  problemId Int
-  language  String
-  code      String
-  status    submissionStatus @default(PENDING)
-  result    Json?
-  createdAt DateTime         @default(now()) @db.Date
+  id         Int              @id @default(autoincrement())
+  user       User             @relation(fields: [userId], references: [id])
+  userId     Int
+  email      String
+  problem    Problem          @relation(fields: [problemId], references: [id])
+  problemId  Int
+  languageId Int
+  code       String
+  status     submissionStatus @default(WRONG_ANSWER)
+  result     Json?
+  memory     Int
+  time       Int
+  createdAt  DateTime         @default(now()) @db.Date
 }
 
 // Submission structure 
@@ -77,9 +80,8 @@ model Submission {
 // }
 
 enum submissionStatus {
-  PENDING
   ACCEPTED
-  ERROR
+  WRONG_ANSWER
 }
 
 model Testcases {
