@@ -82,7 +82,7 @@ const saveSubmission = async (
         createdAt,
         code: source_code,
         languageId: language_id,
-        status: (testCaseCount == 3 ? 'ACCEPTED' : 'WRONG ANSWER'),
+        status: (testCaseCount == 3 ? 'ACCEPTED' : 'WRONG_ANSWER'),
         userId: id,
         problemId,
     }

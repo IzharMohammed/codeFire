@@ -1,6 +1,6 @@
 export interface Submission {
     languageId: number;
-    status: "ACCEPTED" | "WRONG ANSWER";
+    status: "ACCEPTED" | "WRONG_ANSWER";
     result: any;
     memory: number;
     time: number;
