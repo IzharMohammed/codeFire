@@ -42,8 +42,10 @@ router.post('/', async (req: Request, res: Response) => {
     const testCaseCount = await validateTestCases(result, problemId);
     console.log(`testCaseCount:-${testCaseCount}`);
 
-    await saveSubmission(result, problemId, language_id, usersEmail, testCaseCount, source_code, id);
-    return res.json({ msg: result, testCaseCount });
+   const savedSubmissionResponse =  await saveSubmission(result, problemId, language_id, usersEmail, testCaseCount.testCaseCount,testCaseCount.totalTestCases, source_code, id);
+   console.log(`saveSubmissionResponse :- ${savedSubmissionResponse }`);
+   
+   return res.json({ msg: result, testCaseCount });
 });
 
 
@@ -63,6 +65,7 @@ const saveSubmission = async (
     language_id: number,
     usersEmail: string,
     testCaseCount: number,
+    totalTestCases: number,
     source_code: string,
     id: number
 ) => {
@@ -81,7 +84,9 @@ const saveSubmission = async (
         result,
         createdAt,
         code: source_code,
-        languageId: language_id,
+        languageId: language_id,    
+        testCaseCount,
+        totalTestCases,
         status: (testCaseCount == 3 ? 'ACCEPTED' : 'WRONG_ANSWER'),
         userId: id,
         problemId,
@@ -112,7 +117,7 @@ const fetchProblemDetails = async (problemId: number) => {
     })
 }
 
-const validateTestCases = async (result: Judge0Results, problemId: number): Promise<number> => {
+const validateTestCases = async (result: Judge0Results, problemId: number): Promise<{testCaseCount: number,totalTestCases: number}> => {
     const response1 = await fetchProblemDetails(problemId);
 
     console.log(`stdIn:- ${JSON.stringify(response1?.testCases[0].input)}`);
@@ -133,7 +138,7 @@ const validateTestCases = async (result: Judge0Results, problemId: number): Prom
         }
     }
 
-    return testCaseCount;
+    return {testCaseCount, totalTestCases: response1?.testCases.length!};
 }
 
 const pollingResponseFromJudge0 = async (token: any) => {

@@ -30,13 +30,14 @@ model Problem {
 }
 
 model Template {
-  id         Int     @id @default(autoincrement())
-  language   String
-  languageId Int
-  starterCode       String
+  id                 Int     @id @default(autoincrement())
+  language           String
+  languageId         Int
+  starterCode        String
   stdInRetrievalCode String
-  problem    Problem @relation(fields: [problemId], references: [id])
-  problemId  Int
+  finalCode          String
+  problem            Problem @relation(fields: [problemId], references: [id])
+  problemId          Int
 }
 
 //Template structure:-  
@@ -48,19 +49,21 @@ model Template {
 // }
 
 model Submission {
-  id         Int              @id @default(autoincrement())
-  user       User             @relation(fields: [userId], references: [id])
-  userId     Int
-  email      String
-  problem    Problem          @relation(fields: [problemId], references: [id])
-  problemId  Int
-  languageId Int
-  code       String
-  status     submissionStatus @default(WRONG_ANSWER)
-  result     Json?
-  memory     Int
-  time       Int
-  createdAt  DateTime         @default(now()) @db.Date
+  id             Int              @id @default(autoincrement())
+  user           User             @relation(fields: [userId], references: [id])
+  userId         Int
+  email          String
+  problem        Problem          @relation(fields: [problemId], references: [id])
+  problemId      Int
+  languageId     Int
+  testCaseCount  Int
+  totalTestCases Int
+  code           String
+  status         submissionStatus @default(WRONG_ANSWER)
+  result         Json?
+  memory         Int
+  time           Int
+  createdAt      String
 }
 
 // Submission structure 

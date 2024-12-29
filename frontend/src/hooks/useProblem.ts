@@ -19,6 +19,9 @@ interface Template {
     language: string;
     code: string;
     languageId: number;
+    starterCode: string;
+    stdInRetrievalCode: string;
+    finalCode: string;
 }
 
 const useProblem = (id: number) => {
@@ -33,8 +36,8 @@ const useProblem = (id: number) => {
             setLoading(true);
             try {
                 const response = await axios.get(`http://localhost:4000/api/v1/problems/${id}`);
-                // console.log(`response:- ${response}`);
-                setTemplate(response.data.template);
+                console.log(`response:- ${JSON.stringify(response.data)}`);
+            setTemplate(response.data.template);
                 setTestCases(response.data.testCases);
                 setProblem(response.data);
             } catch (error) {

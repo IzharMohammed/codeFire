@@ -11,7 +11,9 @@ export interface CreateProblemBody {
     testCases: TestCase[];
     template: {
         language: string;
-        code: string;
+        starterCode: string;
+        finalCode: string;
+        stdInRetrievalCode: string;
         languageId: number;
     }[];
 }

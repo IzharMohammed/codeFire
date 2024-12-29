@@ -4,6 +4,8 @@ export interface Submission {
     result: any;
     memory: number;
     time: number;
+    testCaseCount: number;
+    totalTestCases: number;
     createdAt: string;
     code: string;
     email: string;

@@ -51,8 +51,10 @@ router.post('/createproblem', async (req: Request<{}, {}, CreateProblemBody>, re
                 template: {
                     create: template.map((tc) => ({
                         language: tc.language,
-                        code: tc.code,
-                        languageId: tc.languageId
+                        languageId: tc.languageId,
+                        starterCode: tc.starterCode,
+                        stdInRetrievalCode: tc.stdInRetrievalCode,
+                        finalCode: tc.finalCode,
                     }))
                 }
             },

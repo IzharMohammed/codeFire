@@ -74,8 +74,8 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         console.log(`template:- ${template}`);
         template && template.map((temp) => {
             if (temp.languageId === Number(languageId)) {
-                console.log(`starterCode:- ${temp.code}`);
-                setStarterCode(temp.code);
+                console.log(`starterCode:- ${temp.finalCode}`);
+                setStarterCode(temp.finalCode);
             }
         })
         console.log('template:', template);
@@ -171,6 +171,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     async function submitSolution() {
         console.log('submitting...');
         const response = await axios.post(`http://localhost:4000/api/v1/submissions/`, {
+            //@ts-ignore
             id: session?.user?.id,
             source_code: sourceCode,
             language_id: (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '54'),
