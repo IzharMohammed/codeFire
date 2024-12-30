@@ -2048,4 +2048,309 @@ tokens[i] is either an operator: "+", "-", "*", or "/", or an integer in the ran
       }
     ]
   },
+  {
+    "title": "Selection Sort",
+    "description": `
+### Description
+Given an array arr, use selection sort to sort arr[] in increasing order.
+
+### Example 1
+**Input:** \`arr[] = [4, 1, 3, 9, 7]\`
+**Output:** \`[1, 3, 4, 7, 9]\`
+**Explanation:** Maintain sorted (in bold) and unsorted subarrays. Select 1. Array becomes 1 4 3 9 7. Select 3. Array becomes 1 3 4 9 7. Select 4. Array becomes 1 3 4 9 7. Select 7. Array becomes 1 3 4 7 9. Select 9. Array becomes 1 3 4 7 9.
+
+### Example 2
+**Input:** \`arr[] = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]\`
+**Output:** \`[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\`
+
+### Example 3
+**Input:** \`arr[] = [38, 31, 20, 14, 30]\`
+**Output:** \`[14, 20, 30, 31, 38]\`
+
+### Constraints
+1 ≤ arr.size() ≤ 10^3
+1 ≤ arr[i] ≤ 10^6
+    `,
+    "difficulty": "Easy",
+    "testCases": [
+      { "input": "[4, 1, 3, 9, 7]", "output": "[1, 3, 4, 7, 9]" },
+      { "input": "[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]", "output": "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" },
+      { "input": "[38, 31, 20, 14, 30]", "output": "[14, 20, 30, 31, 38]" }
+    ],
+    "template": [
+      {
+        "language": "Python",
+        "languageId": 71,
+        "starterCode": "class Solution:\n    def selectionSort(self, arr: List[int]) -> None:\n        pass",
+        "stdInRetrievalCode": "if __name__ == \"__main__\":\n    import sys\n    import json\n    input_data = json.loads(sys.stdin.read().strip())\n    Solution().selectionSort(input_data)\n    print(input_data)",
+        "finalCode": "class Solution:\n    def selectionSort(self, arr: List[int]) -> None:\n        n = len(arr)\n        for i in range(n):\n            min_idx = i\n            for j in range(i+1, n):\n                if arr[j] < arr[min_idx]:\n                    min_idx = j\n            arr[i], arr[min_idx] = arr[min_idx], arr[i]\n\nif __name__ == \"__main__\":\n    import sys\n    import json\n    input_data = json.loads(sys.stdin.read().strip())\n    Solution().selectionSort(input_data)\n    print(input_data)"
+      },
+      {
+        "language": "JavaScript",
+        "languageId": 63,
+        "starterCode": "class Solution {\n    selectionSort(arr) {\n        \n    }\n}",
+        "stdInRetrievalCode": "process.stdin.on(\"data\", (data) => {\n    const input = JSON.parse(data.toString().trim());\n    new Solution().selectionSort(input);\n    console.log(input);\n});",
+        "finalCode": "class Solution {\n    selectionSort(arr) {\n        const n = arr.length;\n        for (let i = 0; i < n; i++) {\n            let min_idx = i;\n            for (let j = i + 1; j < n; j++) {\n                if (arr[j] < arr[min_idx]) {\n                    min_idx = j;\n                }\n            }\n            [arr[i], arr[min_idx]] = [arr[min_idx], arr[i]];\n        }\n    }\n}\n\nprocess.stdin.on(\"data\", (data) => {\n    const input = JSON.parse(data.toString().trim());\n    new Solution().selectionSort(input);\n    console.log(input);\n});"
+      },
+      {
+        "language": "Java",
+        "languageId": 62,
+        "starterCode": "import java.util.*;\n\nclass Solution {\n    void selectionSort(int[] arr) {\n        // code here\n    }\n}",
+        "stdInRetrievalCode": "public class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        input = input.substring(1, input.length() - 1);\n        String[] parts = input.split(\",\");\n        int[] arr = new int[parts.length];\n        for (int i = 0; i < parts.length; i++) {\n            arr[i] = Integer.parseInt(parts[i].trim());\n        }\n        new Solution().selectionSort(arr);\n        System.out.println(Arrays.toString(arr));\n    }\n}",
+        "finalCode": "import java.util.*;\n\nclass Solution {\n    void selectionSort(int[] arr) {\n        int n = arr.length;\n        for (int i = 0; i < n; i++) {\n            int min_idx = i;\n            for (int j = i + 1; j < n; j++) {\n                if (arr[j] < arr[min_idx]) {\n                    min_idx = j;\n                }\n            }\n            int temp = arr[min_idx];\n            arr[min_idx] = arr[i];\n            arr[i] = temp;\n        }\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        input = input.substring(1, input.length() - 1);\n        String[] parts = input.split(\",\");\n        int[] arr = new int[parts.length];\n        for (int i = 0; i < parts.length; i++) {\n            arr[i] = Integer.parseInt(parts[i].trim());\n        }\n        new Solution().selectionSort(arr);\n        System.out.println(Arrays.toString(arr));\n    }\n}"
+      },
+      {
+        "language": "C++",
+        "languageId": 54,
+        "starterCode": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    void selectionSort(vector<int>& arr) {\n        // code here\n    }\n};",
+        "stdInRetrievalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nvector<int> parseInput(string input) {\n    vector<int> arr;\n    input = input.substr(1, input.size() - 2);\n    stringstream ss(input);\n    string num;\n    while (getline(ss, num, ',')) {\n        arr.push_back(stoi(num));\n    }\n    return arr;\n}\n\nint main() {\n    string input;\n    getline(cin, input);\n    vector<int> arr = parseInput(input);\n    Solution().selectionSort(arr);\n    for (int i = 0; i < arr.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << arr[i];\n    }\n    cout << endl;\n    return 0;\n}",
+        "finalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nclass Solution {\npublic:\n    void selectionSort(vector<int>& arr) {\n        int n = arr.size();\n        for (int i = 0; i < n; i++) {\n            int min_idx = i;\n            for (int j = i + 1; j < n; j++) {\n                if (arr[j] < arr[min_idx]) {\n                    min_idx = j;\n                }\n            }\n            swap(arr[i], arr[min_idx]);\n        }\n    }\n};\n\nvector<int> parseInput(string input) {\n    vector<int> arr;\n    input = input.substr(1, input.size() - 2);\n    stringstream ss(input);\n    string num;\n    while (getline(ss, num, ',')) {\n        arr.push_back(stoi(num));\n    }\n    return arr;\n}\n\nint main() {\n    string input;\n    getline(cin, input);\n    vector<int> arr = parseInput(input);\n    Solution().selectionSort(arr);\n    for (int i = 0; i < arr.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << arr[i];\n    }\n    cout << endl;\n    return 0;\n}"
+      }
+    ]
+  },
+  {
+    "title": "Bubble Sort",
+    "description": `
+### Description
+Given an array, arr[]. Sort the array using bubble sort algorithm.
+
+### Example 1
+**Input:** \`arr[] = [4, 1, 3, 9, 7]\`
+**Output:** \`[1, 3, 4, 7, 9]\`
+
+### Example 2
+**Input:** \`arr[] = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]\`
+**Output:** \`[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\`
+
+### Example 3
+**Input:** \`arr[] = [1, 2, 3, 4, 5]\`
+**Output:** \`[1, 2, 3, 4, 5]\`
+**Explanation:** An array that is already sorted should remain unchanged after applying bubble sort.
+
+### Constraints
+1 <= arr.size() <= 10^3
+1 <= arr[i] <= 10^3
+    `,
+    "difficulty": "Easy",
+    "testCases": [
+      { "input": "[4, 1, 3, 9, 7]", "output": "[1, 3, 4, 7, 9]" },
+      { "input": "[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]", "output": "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" },
+      { "input": "[1, 2, 3, 4, 5]", "output": "[1, 2, 3, 4, 5]" }
+    ],
+    "template": [
+      {
+        "language": "Python",
+        "languageId": 71,
+        "starterCode": "class Solution:\n    def bubbleSort(self, arr: List[int]) -> None:\n        pass",
+        "stdInRetrievalCode": "if __name__ == \"__main__\":\n    import sys\n    import json\n    input_data = json.loads(sys.stdin.read().strip())\n    Solution().bubbleSort(input_data)\n    print(input_data)",
+        "finalCode": "class Solution:\n    def bubbleSort(self, arr: List[int]) -> None:\n        n = len(arr)\n        for i in range(n):\n            for j in range(0, n-i-1):\n                if arr[j] > arr[j+1]:\n                    arr[j], arr[j+1] = arr[j+1], arr[j]\n\nif __name__ == \"__main__\":\n    import sys\n    import json\n    input_data = json.loads(sys.stdin.read().strip())\n    Solution().bubbleSort(input_data)\n    print(input_data)"
+      },
+      {
+        "language": "JavaScript",
+        "languageId": 63,
+        "starterCode": "class Solution {\n    bubbleSort(arr) {\n        \n    }\n}",
+        "stdInRetrievalCode": "process.stdin.on(\"data\", (data) => {\n    const input = JSON.parse(data.toString().trim());\n    new Solution().bubbleSort(input);\n    console.log(input);\n});",
+        "finalCode": "class Solution {\n    bubbleSort(arr) {\n        const n = arr.length;\n        for (let i = 0; i < n; i++) {\n            for (let j = 0; j < n - i - 1; j++) {\n                if (arr[j] > arr[j + 1]) {\n                    [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];\n                }\n            }\n        }\n    }\n}\n\nprocess.stdin.on(\"data\", (data) => {\n    const input = JSON.parse(data.toString().trim());\n    new Solution().bubbleSort(input);\n    console.log(input);\n});"
+      },
+      {
+        "language": "Java",
+        "languageId": 62,
+        "starterCode": "import java.util.*;\n\nclass Solution {\n    public static void bubbleSort(int arr[]) {\n        // code here\n    }\n}",
+        "stdInRetrievalCode": "public class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        input = input.substring(1, input.length() - 1);\n        String[] parts = input.split(\",\");\n        int[] arr = new int[parts.length];\n        for (int i = 0; i < parts.length; i++) {\n            arr[i] = Integer.parseInt(parts[i].trim());\n        }\n        Solution.bubbleSort(arr);\n        System.out.println(Arrays.toString(arr));\n    }\n}",
+        "finalCode": "import java.util.*;\n\nclass Solution {\n    public static void bubbleSort(int arr[]) {\n        int n = arr.length;\n        for (int i = 0; i < n-1; i++) {\n            for (int j = 0; j < n-i-1; j++) {\n                if (arr[j] > arr[j+1]) {\n                    int temp = arr[j];\n                    arr[j] = arr[j+1];\n                    arr[j+1] = temp;\n                }\n            }\n        }\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        input = input.substring(1, input.length() - 1);\n        String[] parts = input.split(\",\");\n        int[] arr = new int[parts.length];\n        for (int i = 0; i < parts.length; i++) {\n            arr[i] = Integer.parseInt(parts[i].trim());\n        }\n        Solution.bubbleSort(arr);\n        System.out.println(Arrays.toString(arr));\n    }\n}"
+      },
+      {
+        "language": "C++",
+        "languageId": 54,
+        "starterCode": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    void bubbleSort(vector<int>& arr) {\n        // code here\n    }\n};",
+        "stdInRetrievalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nvector<int> parseInput(string input) {\n    vector<int> arr;\n    input = input.substr(1, input.size() - 2);\n    stringstream ss(input);\n    string num;\n    while (getline(ss, num, ',')) {\n        arr.push_back(stoi(num));\n    }\n    return arr;\n}\n\nint main() {\n    string input;\n    getline(cin, input);\n    vector<int> arr = parseInput(input);\n    Solution().bubbleSort(arr);\n    for (int i = 0; i < arr.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << arr[i];\n    }\n    cout << endl;\n    return 0;\n}",
+        "finalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nclass Solution {\npublic:\n    void bubbleSort(vector<int>& arr) {\n        int n = arr.size();\n        for (int i = 0; i < n-1; i++) {\n            for (int j = 0; j < n-i-1; j++) {\n                if (arr[j] > arr[j+1]) {\n                    swap(arr[j], arr[j+1]);\n                }\n            }\n        }\n    }\n};\n\nvector<int> parseInput(string input) {\n    vector<int> arr;\n    input = input.substr(1, input.size() - 2);\n    stringstream ss(input);\n    string num;\n    while (getline(ss, num, ',')) {\n        arr.push_back(stoi(num));\n    }\n    return arr;\n}\n\nint main() {\n    string input;\n    getline(cin, input);\n    vector<int> arr = parseInput(input);\n    Solution().bubbleSort(arr);\n    for (int i = 0; i < arr.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << arr[i];\n    }\n    cout << endl;\n    return 0;\n}"
+      }
+    ]
+  },
+  {
+    "title": "Merge Sort",
+    "description": `
+### Description
+Given an array arr[], its starting position l and its ending position r. Sort the array using the merge sort algorithm.
+
+### Example 1
+**Input:** \`arr[] = [4, 1, 3, 9, 7]\`
+**Output:** \`[1, 3, 4, 7, 9]\`
+
+### Example 2
+**Input:** \`arr[] = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]\`
+**Output:** \`[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\`
+
+### Example 3
+**Input:** \`arr[] = [1, 3 , 2]\`
+**Output:** \`[1, 2, 3]\`
+
+### Constraints
+1 <= arr.size() <= 10^5
+1 <= arr[i] <= 10^5
+    `,
+    "difficulty": "Medium",
+    "testCases": [
+      { "input": "[4, 1, 3, 9, 7]", "output": "[1, 3, 4, 7, 9]" },
+      { "input": "[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]", "output": "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" },
+      { "input": "[1, 3 , 2]", "output": "[1, 2, 3]" }
+    ],
+    "template": [
+      {
+        "language": "Python",
+        "languageId": 71,
+        "starterCode": "class Solution:\n    def mergeSort(self, arr: List[int], l: int, r: int) -> None:\n        pass",
+        "stdInRetrievalCode": "if __name__ == \"__main__\":\n    import sys\n    import json\n    input_data = json.loads(sys.stdin.read().strip())\n    arr = input_data\n    Solution().mergeSort(arr, 0, len(arr) - 1)\n    print(arr)",
+        "finalCode": "class Solution:\n    def mergeSort(self, arr: List[int], l: int, r: int) -> None:\n        if l < r:\n            m = (l + r) // 2\n            self.mergeSort(arr, l, m)\n            self.mergeSort(arr, m + 1, r)\n            self.merge(arr, l, m, r)\n\n    def merge(self, arr: List[int], l: int, m: int, r: int) -> None:\n        n1 = m - l + 1\n        n2 = r - m\n        L = arr[l:l + n1]\n        R = arr[m + 1:m + 1 + n2]\n        i = j = 0\n        k = l\n        while i < n1 and j < n2:\n            if L[i] <= R[j]:\n                arr[k] = L[i]\n                i += 1\n            else:\n                arr[k] = R[j]\n                j += 1\n            k += 1\n        while i < n1:\n            arr[k] = L[i]\n            i += 1\n            k += 1\n        while j < n2:\n            arr[k] = R[j]\n            j += 1\n            k += 1\n\nif __name__ == \"__main__\":\n    import sys\n    import json\n    input_data = json.loads(sys.stdin.read().strip())\n    arr = input_data\n    Solution().mergeSort(arr, 0, len(arr) - 1)\n    print(arr)"
+      },
+      {
+        "language": "JavaScript",
+        "languageId": 63,
+        "starterCode": "class Solution {\n    mergeSort(arr, l, r) {\n        \n    }\n}",
+        "stdInRetrievalCode": "process.stdin.on(\"data\", (data) => {\n    const input = JSON.parse(data.toString().trim());\n    new Solution().mergeSort(input, 0, input.length - 1);\n    console.log(input);\n});",
+        "finalCode": "class Solution {\n    mergeSort(arr, l, r) {\n        if (l < r) {\n            const m = Math.floor((l + r) / 2);\n            this.mergeSort(arr, l, m);\n            this.mergeSort(arr, m + 1, r);\n            this.merge(arr, l, m, r);\n        }\n    }\n\n    merge(arr, l, m, r) {\n        const n1 = m - l + 1;\n        const n2 = r - m;\n        const L = arr.slice(l, l + n1);\n        const R = arr.slice(m + 1, m + 1 + n2);\n        let i = 0, j = 0, k = l;\n        while (i < n1 && j < n2) {\n            if (L[i] <= R[j]) {\n                arr[k] = L[i];\n                i++;\n            } else {\n                arr[k] = R[j];\n                j++;\n            }\n            k++;\n        }\n        while (i < n1) {\n            arr[k] = L[i];\n            i++;\n            k++;\n        }\n        while (j < n2) {\n            arr[k] = R[j];\n            j++;\n            k++;\n        }\n    }\n}\n\nprocess.stdin.on(\"data\", (data) => {\n    const input = JSON.parse(data.toString().trim());\n    new Solution().mergeSort(input, 0, input.length - 1);\n    console.log(input);\n});"
+      },
+      {
+        "language": "Java",
+        "languageId": 62,
+        "starterCode": "import java.util.*;\n\nclass Solution {\n    void mergeSort(int arr[], int l, int r) {\n        // code here\n    }\n}",
+        "stdInRetrievalCode": "public class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        input = input.substring(1, input.length() - 1);\n        String[] parts = input.split(\",\");\n        int[] arr = new int[parts.length];\n        for (int i = 0; i < parts.length; i++) {\n            arr[i] = Integer.parseInt(parts[i].trim());\n        }\n        new Solution().mergeSort(arr, 0, arr.length - 1);\n        System.out.println(Arrays.toString(arr));\n    }\n}",
+        "finalCode": "import java.util.*;\n\nclass Solution {\n    void mergeSort(int arr[], int l, int r) {\n        if (l < r) {\n            int m = (l + r) / 2;\n            mergeSort(arr, l, m);\n            mergeSort(arr, m + 1, r);\n            merge(arr, l, m, r);\n        }\n    }\n\n    void merge(int arr[], int l, int m, int r) {\n        int n1 = m - l + 1;\n        int n2 = r - m;\n        int L[] = new int[n1];\n        int R[] = new int[n2];\n        for (int i = 0; i < n1; ++i)\n            L[i] = arr[l + i];\n        for (int j = 0; j < n2; ++j)\n            R[j] = arr[m + 1 + j];\n        int i = 0, j = 0;\n        int k = l;\n        while (i < n1 && j < n2) {\n            if (L[i] <= R[j]) {\n                arr[k] = L[i];\n                i++;\n            } else {\n                arr[k] = R[j];\n                j++;\n            }\n            k++;\n        }\n        while (i < n1) {\n            arr[k] = L[i];\n            i++;\n            k++;\n        }\n        while (j < n2) {\n            arr[k] = R[j];\n            j++;\n            k++;\n        }\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        input = input.substring(1, input.length() - 1);\n        String[] parts = input.split(\",\");\n        int[] arr = new int[parts.length];\n        for (int i = 0; i < parts.length; i++) {\n            arr[i] = Integer.parseInt(parts[i].trim());\n        }\n        new Solution().mergeSort(arr, 0, arr.length - 1);\n        System.out.println(Arrays.toString(arr));\n    }\n}"
+      },
+      {
+        "language": "C++",
+        "languageId": 54,
+        "starterCode": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    void mergeSort(vector<int>& arr, int l, int r) {\n        // code here\n    }\n};",
+        "stdInRetrievalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nvector<int> parseInput(string input) {\n    vector<int> arr;\n    input = input.substr(1, input.size() - 2);\n    stringstream ss(input);\n    string num;\n    while (getline(ss, num, ',')) {\n        arr.push_back(stoi(num));\n    }\n    return arr;\n}\n\nint main() {\n    string input;\n    getline(cin, input);\n    vector<int> arr = parseInput(input);\n    Solution().mergeSort(arr, 0, arr.size() - 1);\n    for (int i = 0; i < arr.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << arr[i];\n    }\n    cout << endl;\n    return 0;\n}",
+        "finalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nclass Solution {\npublic:\n    void mergeSort(vector<int>& arr, int l, int r) {\n        if (l < r) {\n            int m = l + (r - l) / 2;\n            mergeSort(arr, l, m);\n            mergeSort(arr, m + 1, r);\n            merge(arr, l, m, r);\n        }\n    }\n\n    void merge(vector<int>& arr, int l, int m, int r) {\n        int n1 = m - l + 1;\n        int n2 = r - m;\n        vector<int> L(n1), R(n2);\n        for (int i = 0; i < n1; i++)\n            L[i] = arr[l + i];\n        for (int j = 0; j < n2; j++)\n            R[j] = arr[m + 1 + j];\n        int i = 0, j = 0, k = l;\n        while (i < n1 && j < n2) {\n            if (L[i] <= R[j]) {\n                arr[k] = L[i];\n                i++;\n            } else {\n                arr[k] = R[j];\n                j++;\n            }\n            k++;\n        }\n        while (i < n1) {\n            arr[k] = L[i];\n            i++;\n            k++;\n        }\n        while (j < n2) {\n            arr[k] = R[j];\n            j++;\n            k++;\n        }\n    }\n};\n\nvector<int> parseInput(string input) {\n    vector<int> arr;\n    input = input.substr(1, input.size() - 2);\n    stringstream ss(input);\n    string num;\n    while (getline(ss, num, ',')) {\n        arr.push_back(stoi(num));\n    }\n    return arr;\n}\n\nint main() {\n    string input;\n    getline(cin, input);\n    vector<int> arr = parseInput(input);\n    Solution().mergeSort(arr, 0, arr.size() - 1);\n    for (int i = 0; i < arr.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << arr[i];\n    }\n    cout << endl;\n    return 0;\n}"
+      }
+    ]
+  },
+  {
+    "title": "Insertion Sort",
+    "description": `
+### Description
+The task is to complete the insertsort() function which is used to implement Insertion Sort.
+
+### Example 1
+**Input:** \`arr[] = [4, 1, 3, 9, 7]\`
+**Output:** \`[1, 3, 4, 7, 9]\`
+**Explanation:** The sorted array will be [1, 3, 4, 7, 9].
+
+### Example 2
+**Input:** \`arr[] = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]\`
+**Output:** \`[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\`
+**Explanation:** The sorted array will be [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
+
+### Example 3
+**Input:** \`arr[] = [4, 1, 9]\`
+**Output:** \`[1, 4, 9]\`
+**Explanation:** The sorted array will be [1, 4, 9].
+
+### Constraints
+1 <= arr.size() <= 1000
+1 <= arr[i] <= 1000
+    `,
+    "difficulty": "Easy",
+    "testCases": [
+      { "input": "[4, 1, 3, 9, 7]", "output": "[1, 3, 4, 7, 9]" },
+      { "input": "[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]", "output": "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" },
+      { "input": "[4, 1, 9]", "output": "[1, 4, 9]" }
+    ],
+    "template": [
+      {
+        "language": "Python",
+        "languageId": 71,
+        "starterCode": "class Solution:\n    def insertionSort(self, arr: List[int]) -> None:\n        pass",
+        "stdInRetrievalCode": "if __name__ == \"__main__\":\n    import sys\n    import json\n    input_data = json.loads(sys.stdin.read().strip())\n    Solution().insertionSort(input_data)\n    print(input_data)",
+        "finalCode": "class Solution:\n    def insertionSort(self, arr: List[int]) -> None:\n        for i in range(1, len(arr)):\n            key = arr[i]\n            j = i - 1\n            while j >= 0 and key < arr[j]:\n                arr[j + 1] = arr[j]\n                j -= 1\n            arr[j + 1] = key\n\nif __name__ == \"__main__\":\n    import sys\n    import json\n    input_data = json.loads(sys.stdin.read().strip())\n    Solution().insertionSort(input_data)\n    print(input_data)"
+      },
+      {
+        "language": "JavaScript",
+        "languageId": 63,
+        "starterCode": "class Solution {\n    insertionSort(arr) {\n        \n    }\n}",
+        "stdInRetrievalCode": "process.stdin.on(\"data\", (data) => {\n    const input = JSON.parse(data.toString().trim());\n    new Solution().insertionSort(input);\n    console.log(input);\n});",
+        "finalCode": "class Solution {\n    insertionSort(arr) {\n        for (let i = 1; i < arr.length; i++) {\n            let key = arr[i];\n            let j = i - 1;\n            while (j >= 0 && arr[j] > key) {\n                arr[j + 1] = arr[j];\n                j = j - 1;\n            }\n            arr[j + 1] = key;\n        }\n    }\n}\n\nprocess.stdin.on(\"data\", (data) => {\n    const input = JSON.parse(data.toString().trim());\n    new Solution().insertionSort(input);\n    console.log(input);\n});"
+      },
+      {
+        "language": "Java",
+        "languageId": 62,
+        "starterCode": "import java.util.*;\n\nclass Solution {\n    public void insertionSort(int arr[]) {\n        // code here\n    }\n}",
+        "stdInRetrievalCode": "public class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        input = input.substring(1, input.length() - 1);\n        String[] parts = input.split(\",\");\n        int[] arr = new int[parts.length];\n        for (int i = 0; i < parts.length; i++) {\n            arr[i] = Integer.parseInt(parts[i].trim());\n        }\n        new Solution().insertionSort(arr);\n        System.out.println(Arrays.toString(arr));\n    }\n}",
+        "finalCode": "import java.util.*;\n\nclass Solution {\n    public void insertionSort(int arr[]) {\n        int n = arr.length;\n        for (int i = 1; i < n; ++i) {\n            int key = arr[i];\n            int j = i - 1;\n            while (j >= 0 && arr[j] > key) {\n                arr[j + 1] = arr[j];\n                j = j - 1;\n            }\n            arr[j + 1] = key;\n        }\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        input = input.substring(1, input.length() - 1);\n        String[] parts = input.split(\",\");\n        int[] arr = new int[parts.length];\n        for (int i = 0; i < parts.length; i++) {\n            arr[i] = Integer.parseInt(parts[i].trim());\n        }\n        new Solution().insertionSort(arr);\n        System.out.println(Arrays.toString(arr));\n    }\n}"
+      },
+      {
+        "language": "C++",
+        "languageId": 54,
+        "starterCode": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    void insertionSort(vector<int>& arr) {\n        // code here\n    }\n};",
+        "stdInRetrievalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nvector<int> parseInput(string input) {\n    vector<int> arr;\n    input = input.substr(1, input.size() - 2);\n    stringstream ss(input);\n    string num;\n    while (getline(ss, num, ',')) {\n        arr.push_back(stoi(num));\n    }\n    return arr;\n}\n\nint main() {\n    string input;\n    getline(cin, input);\n    vector<int> arr = parseInput(input);\n    Solution().insertionSort(arr);\n    for (int i = 0; i < arr.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << arr[i];\n    }\n    cout << endl;\n    return 0;\n}",
+        "finalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nclass Solution {\npublic:\n    void insertionSort(vector<int>& arr) {\n        int n = arr.size();\n        for (int i = 1; i < n; i++) {\n            int key = arr[i];\n            int j = i - 1;\n            while (j >= 0 && arr[j] > key) {\n                arr[j + 1] = arr[j];\n                j = j - 1;\n            }\n            arr[j + 1] = key;\n        }\n    }\n};\n\nvector<int> parseInput(string input) {\n    vector<int> arr;\n    input = input.substr(1, input.size() - 2);\n    stringstream ss(input);\n    string num;\n    while (getline(ss, num, ',')) {\n        arr.push_back(stoi(num));\n    }\n    return arr;\n}\n\nint main() {\n    string input;\n    getline(cin, input);\n    vector<int> arr = parseInput(input);\n    Solution().insertionSort(arr);\n    for (int i = 0; i < arr.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << arr[i];\n    }\n    cout << endl;\n    return 0;\n}"
+      }
+    ]
+  },
+  {
+    "title": "Quick Sort",
+    "description": `
+### Description
+Implement Quick Sort, a Divide and Conquer algorithm, to sort an array, arr[] in ascending order. Given an array, arr[], with starting index low and ending index high, complete the functions partition() and quickSort(). Use the last element as the pivot so that all elements less than or equal to the pivot come before it, and elements greater than the pivot follow it.
+
+Note: The low and high are inclusive.
+
+### Example 1
+**Input:** \`arr[] = [4, 1, 3, 9, 7]\`
+**Output:** \`[1, 3, 4, 7, 9]\`
+**Explanation:** After sorting, all elements are arranged in ascending order.
+
+### Example 2
+**Input:** \`arr[] = [2, 1, 6, 10, 4, 1, 3, 9, 7]\`
+**Output:** \`[1, 1, 2, 3, 4, 6, 7, 9, 10]\`
+**Explanation:** Duplicate elements (1) are retained in sorted order.
+
+### Example 3
+**Input:** \`arr[] = [5, 5, 5, 5]\`
+**Output:** \`[5, 5, 5, 5]\`
+**Explanation:** All elements are identical, so the array remains unchanged.
+
+### Constraints
+1 <= arr.size() <= 10^5
+1 <= arr[i] <= 10^5
+    `,
+    "difficulty": "Medium",
+    "testCases": [
+      { "input": "[4, 1, 3, 9, 7]", "output": "[1, 3, 4, 7, 9]" },
+      { "input": "[2, 1, 6, 10, 4, 1, 3, 9, 7]", "output": "[1, 1, 2, 3, 4, 6, 7, 9, 10]" },
+      { "input": "[5, 5, 5, 5]", "output": "[5, 5, 5, 5]" }
+    ],
+    "template": [
+      {
+        "language": "Python",
+        "languageId": 71,
+        "starterCode": "class Solution:\n    def quickSort(self, arr: List[int], low: int, high: int) -> None:\n        pass\n\n    def partition(self, arr: List[int], low: int, high: int) -> int:\n        pass",
+        "stdInRetrievalCode": "if __name__ == \"__main__\":\n    import sys\n    import json\n    input_data = json.loads(sys.stdin.read().strip())\n    arr = input_data\n    Solution().quickSort(arr, 0, len(arr) - 1)\n    print(arr)",
+        "finalCode": "class Solution:\n    def quickSort(self, arr: List[int], low: int, high: int) -> None:\n        if low < high:\n            pi = self.partition(arr, low, high)\n            self.quickSort(arr, low, pi - 1)\n            self.quickSort(arr, pi + 1, high)\n\n    def partition(self, arr: List[int], low: int, high: int) -> int:\n        pivot = arr[high]\n        i = low - 1\n        for j in range(low, high):\n            if arr[j] <= pivot:\n                i += 1\n                arr[i], arr[j] = arr[j], arr[i]\n        arr[i + 1], arr[high] = arr[high], arr[i + 1]\n        return i + 1\n\nif __name__ == \"__main__\":\n    import sys\n    import json\n    input_data = json.loads(sys.stdin.read().strip())\n    arr = input_data\n    Solution().quickSort(arr, 0, len(arr) - 1)\n    print(arr)"
+      },
+      {
+        "language": "JavaScript",
+        "languageId": 63,
+        "starterCode": "class Solution {\n    quickSort(arr, low, high) {\n        \n    }\n\n    partition(arr, low, high) {\n        \n    }\n}",
+        "stdInRetrievalCode": "process.stdin.on(\"data\", (data) => {\n    const input = JSON.parse(data.toString().trim());\n    new Solution().quickSort(input, 0, input.length - 1);\n    console.log(input);\n});",
+        "finalCode": "class Solution {\n    quickSort(arr, low, high) {\n        if (low < high) {\n            const pi = this.partition(arr, low, high);\n            this.quickSort(arr, low, pi - 1);\n            this.quickSort(arr, pi + 1, high);\n        }\n    }\n\n    partition(arr, low, high) {\n        const pivot = arr[high];\n        let i = low - 1;\n        for (let j = low; j < high; j++) {\n            if (arr[j] <= pivot) {\n                i++;\n                [arr[i], arr[j]] = [arr[j], arr[i]];\n            }\n        }\n        [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];\n        return i + 1;\n    }\n}\n\nprocess.stdin.on(\"data\", (data) => {\n    const input = JSON.parse(data.toString().trim());\n    new Solution().quickSort(input, 0, input.length - 1);\n    console.log(input);\n});"
+      },
+      {
+        "language": "Java",
+        "languageId": 62,
+        "starterCode": "import java.util.*;\n\nclass Solution {\n    static void quickSort(int arr[], int low, int high) {\n        // code here\n    }\n\n    static int partition(int arr[], int low, int high) {\n        // your code here\n    }\n}",
+        "stdInRetrievalCode": "public class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        input = input.substring(1, input.length() - 1);\n        String[] parts = input.split(\",\");\n        int[] arr = new int[parts.length];\n        for (int i = 0; i < parts.length; i++) {\n            arr[i] = Integer.parseInt(parts[i].trim());\n        }\n        Solution.quickSort(arr, 0, arr.length - 1);\n        System.out.println(Arrays.toString(arr));\n    }\n}",
+        "finalCode": "import java.util.*;\n\nclass Solution {\n    static void quickSort(int arr[], int low, int high) {\n        if (low < high) {\n            int pi = partition(arr, low, high);\n            quickSort(arr, low, pi - 1);\n            quickSort(arr, pi + 1, high);\n        }\n    }\n\n    static int partition(int arr[], int low, int high) {\n        int pivot = arr[high];\n        int i = (low - 1);\n        for (int j = low; j < high; j++) {\n            if (arr[j] <= pivot) {\n                i++;\n                int temp = arr[i];\n                arr[i] = arr[j];\n                arr[j] = temp;\n            }\n        }\n        int temp = arr[i + 1];\n        arr[i + 1] = arr[high];\n        arr[high] = temp;\n        return i + 1;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        input = input.substring(1, input.length() - 1);\n        String[] parts = input.split(\",\");\n        int[] arr = new int[parts.length];\n        for (int i = 0; i < parts.length; i++) {\n            arr[i] = Integer.parseInt(parts[i].trim());\n        }\n        Solution.quickSort(arr, 0, arr.length - 1);\n        System.out.println(Arrays.toString(arr));\n    }\n}"
+      },
+      {
+        "language": "C++",
+        "languageId": 54,
+        "starterCode": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    static void quickSort(vector<int>& arr, int low, int high) {\n        // code here\n    }\n\n    static int partition(vector<int>& arr, int low, int high) {\n        // your code here\n    }\n};",
+        "stdInRetrievalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nvector<int> parseInput(string input) {\n    vector<int> arr;\n    input = input.substr(1, input.size() - 2);\n    stringstream ss(input);\n    string num;\n    while (getline(ss, num, ',')) {\n        arr.push_back(stoi(num));\n    }\n    return arr;\n}\n\nint main() {\n    string input;\n    getline(cin, input);\n    vector<int> arr = parseInput(input);\n    Solution::quickSort(arr, 0, arr.size() - 1);\n    for (int i = 0; i < arr.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << arr[i];\n    }\n    cout << endl;\n    return 0;\n}",
+        "finalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nclass Solution {\npublic:\n    static void quickSort(vector<int>& arr, int low, int high) {\n        if (low < high) {\n            int pi = partition(arr, low, high);\n            quickSort(arr, low, pi - 1);\n            quickSort(arr, pi + 1, high);\n        }\n    }\n\n    static int partition(vector<int>& arr, int low, int high) {\n        int pivot = arr[high];\n        int i = (low - 1);\n        for (int j = low; j < high; j++) {\n            if (arr[j] <= pivot) {\n                i++;\n                swap(arr[i], arr[j]);\n            }\n        }\n        swap(arr[i + 1], arr[high]);\n        return i + 1;\n    }\n};\n\nvector<int> parseInput(string input) {\n    vector<int> arr;\n    input = input.substr(1, input.size() - 2);\n    stringstream ss(input);\n    string num;\n    while (getline(ss, num, ',')) {\n        arr.push_back(stoi(num));\n    }\n    return arr;\n}\n\nint main() {\n    string input;\n    getline(cin, input);\n    vector<int> arr = parseInput(input);\n    Solution::quickSort(arr, 0, arr.size() - 1);\n    for (int i = 0; i < arr.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << arr[i];\n    }\n    cout << endl;\n    return 0;\n}"
+      }
+    ]
+  }
 ];
