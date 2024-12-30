@@ -38,8 +38,42 @@ import { CheckCircle, XCircle } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useSession } from 'next-auth/react';
 
+type Submission = {
+    id: number;
+    userId: number;
+    email: string;
+    problemId: number;
+    languageId: number;
+    testCaseCount: number;
+    totalTestCases: number;
+    code: string;
+    status: string;
+    result: Result[];
+    memory: number;
+    time: number;
+    createdAt: string;
+}
+
+type Result = {
+    time: string;
+    token: string;
+    memory: number;
+    status: Status;
+    stderr: string | null;
+    stdout: string | null;
+    message: string | null;
+    compile_output: string | null;
+}
+
+type Status = {
+    id: number;
+    description: string;
+}
+
+
 function page({ params: { problemId } }: { params: { problemId: number } }) {
 
+    const [submissionResponse, setSubmissionResponse] = useState<Submission[] | null>(null);
     const [IsDragging, setIsDragging] = useState(false);
     const [DraggingVertical, setDraggingVertical] = useState(false);
     const [IsLeftWidth, setIsLeftWidth] = useState(50);
@@ -49,13 +83,14 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     // const [editorLeft, setEditorLeft] = useState(650);
     // const [tab, setTab] = useState('Description');
     const [testCaseIndex, setTestCaseIndex] = useState(0);
-
     const { loading, problem, error, testCases, template } = useProblem(problemId);
-
+    const [id, setUserId] = useState(0);
     const [languageValue, setLanguageValue] = useState(() => {
         const language = sessionStorage.getItem('language');
         return language ? language : 'javascript'
     });
+    const { data: session, status } = useSession();
+    console.log(`session from client:- ${JSON.stringify(session?.user?.email)}`);
 
     const [starterCode, setStarterCode] = useState('');
 
@@ -87,6 +122,34 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         sessionStorage.setItem('theme', themeName)
     }, [themeName]);
 
+    useEffect(() => {
+        console.log('useEffect running...');
+
+        async function setSubmissions() {
+            try {
+               console.log('inside useEffect...');
+               console.log(`session:- ${JSON.stringify(session?.user)}`);
+               
+                const idResponse = await axios.get(`http://localhost:4000/api/v1/auth/${session?.user?.email}`);
+                console.log(`idResponse:- ${JSON.stringify(idResponse)}`);
+
+                setUserId(idResponse.data.id);
+                const submissionResponse = await axios.get(`http://localhost:4000/api/v1/submissions/user/${id}`)
+                console.log(`submissionResponse:- ${JSON.stringify(submissionResponse.data)}`);
+
+                // console.log(`submissionResponse:- ${JSON.stringify(submissionResponse.data)}`);
+                setSubmissionResponse(submissionResponse.data);
+            } catch (error) {
+                console.log(`error:- ${error}`);
+
+            }
+        }
+
+        setSubmissions();
+    }, [session])
+
+
+    console.log(`submissionResponse:- ${JSON.stringify(submissionResponse)}`);
 
     const problems1 = problem?.description ? DOMPurify.sanitize(problem.description) : '';
     // console.log(problems1);
@@ -165,14 +228,13 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     }
 
     // const problemId = useSearchParams().get('problemId');
-    const { data: session, status } = useSession();
-    // console.log(`session from client:- ${JSON.stringify(session?.user.id)}`);
     
     async function submitSolution() {
         console.log('submitting...');
+
         const response = await axios.post(`http://localhost:4000/api/v1/submissions/`, {
             //@ts-ignore
-            id: session?.user?.id,
+            id,
             source_code: sourceCode,
             language_id: (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '54'),
             problemId,
@@ -181,17 +243,21 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         // const stdout = response.data.msg.stdout;
         // console.log(`stdout: ${stdout}, status ${status}`);
         // const status = response.data.msg.status.description;
-        console.log(JSON.stringify(response.data.testCaseCount));
-
+        console.log(`response:- ${JSON.stringify(response.data)}`);
+        // console.log(JSON.stringify(response.data.testCaseCount));
+        // setSubmissionResponse(response.data.submissionResponse);
         // response.data.msg.map()
-        console.log(`testCases:- ${testCases}`);
+        // console.log(`testCases:- ${testCases}`);
 
 
         // console.log(`response:- ${response.data.msg.map((status: any) => status.status.description === "Accepted")}`);
         // const status = response.data.msg.map((status: any) => status.status.description === "Accepted");
         // console.log(`status:- ${JSON.stringify(response.data.status)}`);
-
-        if (status) {
+        let testCases = response.data.testCaseCount.testCaseCount;
+        let testCasePassed = response.data.testCaseCount.totalTestCases;
+        console.log(`testCases:- ${testCases} , testCasePassed:- ${testCasePassed}`);
+        
+        if (testCasePassed === testCases) {
             toast.success('Accepted...!!!');
         } else {
             toast.error('Rejected...!!!');
@@ -325,7 +391,36 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                             </TabsContent>
                             <TabsContent value="submissions">
                                 <div className="h-[500px] overflow-y-auto">
-                                    <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
+                                    {submissionResponse && submissionResponse.map((submissionResponse: any) => (
+                                        <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
+                                            <div className='flex justify-between'>
+                                                <div className='text-xl font-bold'>Submission submission- {submissionResponse && submissionResponse!.id}</div>
+                                                <Badge
+                                                    variant='success'
+                                                >
+                                                    Accepted
+                                                </Badge>
+                                            </div>
+                                            <div className='flex flex-col gap-3'>
+                                                <div className='flex gap-2'>
+                                                    <CheckCircle className="text-green-500 h-5 w-5" />
+                                                    <div> {submissionResponse && submissionResponse!.testCaseCount}/{submissionResponse && submissionResponse!.totalTestCases} test cases passed</div>
+                                                </div>
+                                                <div className='flex  justify-between '>
+                                                    <div >
+                                                        <div>Language: {submissionResponse && submissionResponse!.languageId}</div>
+                                                        <div>Memory: {submissionResponse && submissionResponse!.memory}</div>
+                                                    </div>
+                                                    <div >
+                                                        <div> Runtime:{submissionResponse && submissionResponse!.time}</div>
+                                                        <div>Submitted: {submissionResponse && submissionResponse!.createdAt}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    {/* <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
                                         <div className='flex justify-between'>
                                             <div className='text-xl font-bold'>Submission submission-1734986714559</div>
                                             <Badge
@@ -350,9 +445,9 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
 
-                                    <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
+                                    {/* <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
                                         <div className='flex justify-between'>
                                             <div className='text-xl font-bold'>Submission submission-1734986714559</div>
                                             <Badge
@@ -431,7 +526,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
 
                                 </div>
                             </TabsContent>
@@ -441,7 +536,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
 
                     {/* <div className='border border-gray-600 w-full h-3 cursor-row-resize' onMouseDown={handleMouseUpDown} ></div> */}
 
-                   
+
                 </div>
 
             </div>

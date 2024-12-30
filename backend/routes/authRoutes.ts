@@ -159,8 +159,15 @@ router.post('/logout', (req: Request, res: Response) => {
     // Log out the user
 });
 
-router.get('/user', authMiddleware, (req: Request, res: Response) => {
+router.get('/:email', async (req: Request, res: Response) => {
     // Retrieve authenticated user details
-});
+    const email = req.params['email'];
+    const emailResponse = await prisma.user.findUnique({
+        where: {
+            email
+        }
+    });
 
+    return res.json(emailResponse);
+})
 export default router;

@@ -42,10 +42,10 @@ router.post('/', async (req: Request, res: Response) => {
     const testCaseCount = await validateTestCases(result, problemId);
     console.log(`testCaseCount:-${testCaseCount}`);
 
-   const savedSubmissionResponse =  await saveSubmission(result, problemId, language_id, usersEmail, testCaseCount.testCaseCount,testCaseCount.totalTestCases, source_code, id);
-   console.log(`saveSubmissionResponse :- ${savedSubmissionResponse }`);
+   const savedSubmissionResponse =  await saveSubmission(result, problemId, language_id, usersEmail, testCaseCount.testCaseCount,testCaseCount.totalTestCases, source_code,id);
+   console.log(`saveSubmissionResponse :- ${JSON.stringify(savedSubmissionResponse) }`);
    
-   return res.json({ msg: result, testCaseCount });
+   return res.json({ msg: result, testCaseCount,});
 });
 
 
@@ -81,15 +81,15 @@ const saveSubmission = async (
         email: usersEmail,
         memory,
         time,
+        userId: id,
         result,
         createdAt,
         code: source_code,
-        languageId: language_id,    
+        languageId: Number(language_id),    
         testCaseCount,
         totalTestCases,
         status: (testCaseCount == 3 ? 'ACCEPTED' : 'WRONG_ANSWER'),
-        userId: id,
-        problemId,
+        problemId: Number(problemId),
     }
 
     try {
@@ -101,7 +101,7 @@ const saveSubmission = async (
 
     } catch (error) {
         console.error("Error saving submission:", error);
-        throw new Error("Failed to save submission");
+        throw new Error("Failed to submission");
     }
 }
 
@@ -117,7 +117,7 @@ const fetchProblemDetails = async (problemId: number) => {
     })
 }
 
-const validateTestCases = async (result: Judge0Results, problemId: number): Promise<{testCaseCount: number,totalTestCases: number}> => {
+const validateTestCases = async (result: Judge0Results, problemId: number): Promise<{ testCaseCount: number, totalTestCases: number }> => {
     const response1 = await fetchProblemDetails(problemId);
 
     console.log(`stdIn:- ${JSON.stringify(response1?.testCases[0].input)}`);
@@ -126,8 +126,16 @@ const validateTestCases = async (result: Judge0Results, problemId: number): Prom
     console.log(`response1?.testCases.length:- ${response1?.testCases.length}`);
 
     for (let i = 0; i < response1?.testCases.length!; i++) {
+        console.log(`response1?.testCases:- ${JSON.stringify(response1?.testCases[i])}`);
+        console.log(`result:- ${JSON.stringify(result[i])}`);
+        
         const expectedOutput = JSON.stringify(response1?.testCases[i].output);
-        const actualOutput = JSON.stringify((result[i].stdout.trim())); // Parse stdout and then stringify
+        const actualOutput = result[i].stdout ? JSON.stringify(result[i].stdout.trim()) : null;
+
+        if (actualOutput === null) {
+            console.log(`Test case ${i + 1} has no output.`);
+            // continue; // Skip or handle as needed
+        }
 
         console.log(`expectedOutput: ${expectedOutput}`);
         console.log(`actualOutput: ${actualOutput}`);
@@ -138,8 +146,9 @@ const validateTestCases = async (result: Judge0Results, problemId: number): Prom
         }
     }
 
-    return {testCaseCount, totalTestCases: response1?.testCases.length!};
-}
+    return { testCaseCount, totalTestCases: response1?.testCases.length! };
+};
+
 
 const pollingResponseFromJudge0 = async (token: any) => {
 
@@ -186,8 +195,17 @@ router.get('/:submissionId', (req: Request, res: Response) => {
     // Get submission details by ID
 });
 
-router.get('/user/:userId', authMiddleware, (req: Request, res: Response) => {
+router.get('/user/:userId',async (req: Request, res: Response) => {
     // Get all submissions by user
+    const userId = req.params['userId'];
+    const respone = await prisma.submission.findMany({
+        where: {
+            userId: Number(userId)
+        }
+    })
+    console.log(`respone:- ${JSON.stringify(respone)}`);
+    
+    res.json(respone);
 });
 
 router.get('problem/:problemId', authMiddleware, (req: Request, res: Response) => {
