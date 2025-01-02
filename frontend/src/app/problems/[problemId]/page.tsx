@@ -38,37 +38,6 @@ import { CheckCircle, XCircle } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useSession } from 'next-auth/react';
 
-type Submission = {
-    id: number;
-    userId: number;
-    email: string;
-    problemId: number;
-    languageId: number;
-    testCaseCount: number;
-    totalTestCases: number;
-    code: string;
-    status: string;
-    result: Result[];
-    memory: number;
-    time: number;
-    createdAt: string;
-}
-
-type Result = {
-    time: string;
-    token: string;
-    memory: number;
-    status: Status;
-    stderr: string | null;
-    stdout: string | null;
-    message: string | null;
-    compile_output: string | null;
-}
-
-type Status = {
-    id: number;
-    description: string;
-}
 
 
 function page({ params: { problemId } }: { params: { problemId: number } }) {
@@ -89,6 +58,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         const language = sessionStorage.getItem('language');
         return language ? language : 'javascript'
     });
+
     const { data: session, status } = useSession();
     console.log(`session from client:- ${JSON.stringify(session?.user?.email)}`);
 

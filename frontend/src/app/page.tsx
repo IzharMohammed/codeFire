@@ -1,28 +1,30 @@
+import PaginationControls from "@/components/PaginationControls";
 import ProblemTitle from "@/components/problemTitle";
-import leetcodeProblems from "@/constants/sampleProblemList";
 import { NEXT_AUTH } from "@/lib/auth";
-import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { getServerSession } from "next-auth/next"
 
-interface Problem {
-  id: number,
-  title: string,
-  description: string,
-  difficulty: string,
-  testCases: string,
-}
+export default async function Home({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
 
+  const page = searchParams['page'] ?? '1';
+  const take = searchParams['take'] ?? '10';
 
-export default async function Home() {
+  // (page - 1) 0 * (take) 10 = 0(skip)
+  // 1 * 10 = 10
+  // 2 * 10 = 20
+
+  const skip = (+page - 1) * (+take);
+  console.log(`skip:- ${skip}, take:- ${take}`);
 
   const session = await getServerSession(NEXT_AUTH);
   console.log(`session:- ${session}`);
-  
-  
-  const response = await axios.get('http://localhost:4000/api/v1/problems/');
-  const problemList = response.data;
 
+
+  const response = await axios.get(`http://localhost:4000/api/v1/problems/?skip=${skip}&take=${take}`);
+  const problemList = response.data.data;
+  console.log("problemList:- ", response.data.hasMore);
+
+  const hasMore = response.data.hasMore;
 
   return (
     <div className="flex justify-center my-[7rem]">
@@ -30,12 +32,11 @@ export default async function Home() {
         <div className="flex justify-between p-4 border-b-2">
           <div>status</div>
           <div>title</div>
-          <div>difficulty</div>
-          <div>solved by</div>
+          <div>description</div>
+          <div>done</div>
         </div>
-
         {
-          problemList.map((problem: Problem) => (
+          problemList && problemList.map((problem: Problem) => (
             <div className="flex justify-between p-4 " key={problem.id}>
               <div>done</div>
               <div className="flex gap-12 w-[10rem] md:w-[25rem] sm:w-[17rem] justify-between ">
@@ -46,6 +47,7 @@ export default async function Home() {
             </div>
           ))
         }
+        <PaginationControls hasMore={hasMore} />
       </div>
     </div>
   );
