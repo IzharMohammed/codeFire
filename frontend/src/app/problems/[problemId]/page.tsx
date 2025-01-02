@@ -37,6 +37,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, XCircle } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useSession } from 'next-auth/react';
+import { Loader } from '@/components/Loader';
 
 
 
@@ -52,8 +53,9 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
     // const [editorLeft, setEditorLeft] = useState(650);
     // const [tab, setTab] = useState('Description');
     const [testCaseIndex, setTestCaseIndex] = useState(0);
-    const { loading, problem, error, testCases, template } = useProblem(problemId);
+    const { problem, error, testCases, template } = useProblem(problemId);
     const [id, setUserId] = useState(0);
+    const [loading, setLoading] = useState(false);
     const [languageValue, setLanguageValue] = useState(() => {
         const language = sessionStorage.getItem('language');
         return language ? language : 'javascript'
@@ -74,7 +76,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
 
     useEffect(() => {
         sessionStorage.setItem('language', languageValue);
-        const languageId = (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '50')
+        const languageId = (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '54')
 
         console.log(`template:- ${template}`);
         template && template.map((temp) => {
@@ -92,40 +94,15 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         sessionStorage.setItem('theme', themeName)
     }, [themeName]);
 
-    useEffect(() => {
-        console.log('useEffect running...');
 
-        async function setSubmissions() {
-            try {
-               console.log('inside useEffect...');
-               console.log(`session:- ${JSON.stringify(session?.user)}`);
-               
-                const idResponse = await axios.get(`http://localhost:4000/api/v1/auth/${session?.user?.email}`);
-                console.log(`idResponse:- ${JSON.stringify(idResponse)}`);
 
-                setUserId(idResponse.data.id);
-                const submissionResponse = await axios.get(`http://localhost:4000/api/v1/submissions/user/${id}`)
-                console.log(`submissionResponse:- ${JSON.stringify(submissionResponse.data)}`);
-
-                // console.log(`submissionResponse:- ${JSON.stringify(submissionResponse.data)}`);
-                setSubmissionResponse(submissionResponse.data);
-            } catch (error) {
-                console.log(`error:- ${error}`);
-
-            }
-        }
-
-        setSubmissions();
-    }, [session])
 
 
     console.log(`submissionResponse:- ${JSON.stringify(submissionResponse)}`);
 
     const problems1 = problem?.description ? DOMPurify.sanitize(problem.description) : '';
-    // console.log(problems1);
 
     const problems = DOMPurify.sanitize(sampleProblems.problem1)
-    // console.log(problems);
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         console.log(e);
@@ -197,11 +174,36 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
         setSourceCode(value);
     }
 
-    // const problemId = useSearchParams().get('problemId');
-    
+    useEffect(() => {
+        async function setSubmissions() {
+            try {
+                console.log(`session:- ${JSON.stringify(session?.user)}`);
+
+                const idResponse = await axios.get(`http://localhost:4000/api/v1/auth/${session?.user?.email}`);
+                console.log(`idResponse:- ${JSON.stringify(idResponse)}`);
+
+                setUserId(idResponse.data.id);
+                const submissionResponse = await axios.get(`http://localhost:4000/api/v1/submissions/user/${id}`)
+                console.log(`submissionResponse:- ${JSON.stringify(submissionResponse.data)}`);
+
+                // console.log(`submissionResponse:- ${JSON.stringify(submissionResponse.data)}`);
+                const submissionResponseData = submissionResponse.data;
+                submissionResponseData.reverse();
+                setSubmissionResponse(submissionResponseData);
+            } catch (error) {
+                console.log(`error:- ${error}`);
+
+            }
+        }
+
+        setSubmissions();
+    }, [session])
+
+    // useEffect(() => {setSubmissions()}, [submissionResponse]);
+
     async function submitSolution() {
         console.log('submitting...');
-
+        setLoading(true);
         const response = await axios.post(`http://localhost:4000/api/v1/submissions/`, {
             //@ts-ignore
             id,
@@ -210,33 +212,21 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
             problemId,
             usersEmail: session?.user?.email
         })
-        // const stdout = response.data.msg.stdout;
-        // console.log(`stdout: ${stdout}, status ${status}`);
-        // const status = response.data.msg.status.description;
+        setLoading(false);
         console.log(`response:- ${JSON.stringify(response.data)}`);
-        // console.log(JSON.stringify(response.data.testCaseCount));
-        // setSubmissionResponse(response.data.submissionResponse);
-        // response.data.msg.map()
-        // console.log(`testCases:- ${testCases}`);
 
-
-        // console.log(`response:- ${response.data.msg.map((status: any) => status.status.description === "Accepted")}`);
-        // const status = response.data.msg.map((status: any) => status.status.description === "Accepted");
-        // console.log(`status:- ${JSON.stringify(response.data.status)}`);
         let testCases = response.data.testCaseCount.testCaseCount;
         let testCasePassed = response.data.testCaseCount.totalTestCases;
+
         console.log(`testCases:- ${testCases} , testCasePassed:- ${testCasePassed}`);
-        
+
         if (testCasePassed === testCases) {
             toast.success('Accepted...!!!');
         } else {
             toast.error('Rejected...!!!');
         }
 
-        // console.log('response', response);
-
     }
-    // console.log('test cases', testCases);
 
     const changeTestCase = (index: number) => {
         setTestCaseIndex(index);
@@ -290,7 +280,11 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                             </Select>
                         </div>
                         <div>
-                            <Button onClick={submitSolution}>Run</Button>
+                            <Button onClick={submitSolution}>
+                                {
+                                    loading ? < Loader size="lg" color="ghost" /> : 'Submit'
+                                }
+                            </Button>
                         </div>
                         <div>
                             <Sheet >
@@ -346,7 +340,7 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                     <div className='mt-2' >
                         <Tabs defaultValue="code">
                             <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger value="code">Code</TabsTrigger>
+                                <TabsTrigger value="code">{id}</TabsTrigger>
                                 <TabsTrigger value="submissions">Submissions</TabsTrigger>
                             </TabsList>
                             <TabsContent value="code">
@@ -366,9 +360,9 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                                             <div className='flex justify-between'>
                                                 <div className='text-xl font-bold'>Submission submission- {submissionResponse && submissionResponse!.id}</div>
                                                 <Badge
-                                                    variant='success'
+                                                    variant={submissionResponse.status === 'ACCEPTED' ? 'success' : 'destructive'}
                                                 >
-                                                    Accepted
+                                                    {submissionResponse.status === 'ACCEPTED' ? 'Accepted' : 'Rejected'}
                                                 </Badge>
                                             </div>
                                             <div className='flex flex-col gap-3'>
@@ -378,7 +372,13 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                                                 </div>
                                                 <div className='flex  justify-between '>
                                                     <div >
-                                                        <div>Language: {submissionResponse && submissionResponse!.languageId}</div>
+                                                        {/* language_id: (languageValue === 'javaScript' ? '63' : languageValue === 'java' ? '62' : languageValue === 'python' ? '71' : '54'), */}
+
+                                                        <div>Language :
+                                                            {
+                                                                submissionResponse && submissionResponse!.languageId
+                                                            }
+                                                        </div>
                                                         <div>Memory: {submissionResponse && submissionResponse!.memory}</div>
                                                     </div>
                                                     <div >
@@ -402,87 +402,6 @@ function page({ params: { problemId } }: { params: { problemId: number } }) {
                                         <div className='flex flex-col gap-3'>
                                             <div className='flex gap-2'>
                                                 <CheckCircle className="text-green-500 h-5 w-5" />
-                                                <div> 3/3 test cases passed</div>
-                                            </div>
-                                            <div className='flex  justify-between '>
-                                                <div >
-                                                    <div>Language: javascript</div>
-                                                    <div>Memory: 31 MB</div>
-                                                </div>
-                                                <div >
-                                                    <div> Runtime: 16 ms</div>
-                                                    <div>Submitted: 12/24/2024, 2:15:14 AM</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> */}
-
-                                    {/* <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
-                                        <div className='flex justify-between'>
-                                            <div className='text-xl font-bold'>Submission submission-1734986714559</div>
-                                            <Badge
-                                                variant='destructive' 
-                                            >
-                                                wrong answer
-                                            </Badge>
-                                        </div>
-                                        <div className='flex flex-col gap-3'>
-                                            <div className='flex gap-2'>
-                                                <XCircle className="text-red-500 h-5 w-5" />
-                                                <div> 3/3 test cases passed</div>
-                                            </div>
-                                            <div className='flex  justify-between '>
-                                                <div >
-                                                    <div>Language: javascript</div>
-                                                    <div>Memory: 31 MB</div>
-                                                </div>
-                                                <div >
-                                                    <div> Runtime: 16 ms</div>
-                                                    <div>Submitted: 12/24/2024, 2:15:14 AM</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
-                                        <div className='flex justify-between'>
-                                            <div className='text-xl font-bold'>Submission submission-1734986714559</div>
-                                            <Badge
-                                                variant='success' 
-                                            >
-                                                Accepted
-                                            </Badge>
-                                        </div>
-                                        <div className='flex flex-col gap-3'>
-                                            <div className='flex gap-2'>
-                                                <CheckCircle className="text-green-500 h-5 w-5" />
-                                                <div> 3/3 test cases passed</div>
-                                            </div>
-                                            <div className='flex  justify-between '>
-                                                <div >
-                                                    <div>Language: javascript</div>
-                                                    <div>Memory: 31 MB</div>
-                                                </div>
-                                                <div >
-                                                    <div> Runtime: 16 ms</div>
-                                                    <div>Submitted: 12/24/2024, 2:15:14 AM</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col border border-gray-500 rounded-md m-4 p-4 gap-3'>
-                                        <div className='flex justify-between'>
-                                            <div className='text-xl font-bold'>Submission submission-1734986714559</div>
-                                            <Badge
-                                                variant='destructive' 
-                                            >
-                                                wrong answer
-                                            </Badge>
-                                        </div>
-                                        <div className='flex flex-col gap-3'>
-                                            <div className='flex gap-2'>
-                                                <XCircle className="text-red-500 h-5 w-5" />
                                                 <div> 3/3 test cases passed</div>
                                             </div>
                                             <div className='flex  justify-between '>

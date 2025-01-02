@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { authMiddleware } from "../middleware/authMiddleware";
 import axios from 'axios';
 import prisma from "../lib/db";
-import { Submission,Judge0Result,Judge0Results } from "../types/submission";
+import { Submission, Judge0Result, Judge0Results } from "../types/submission";
 
 const Router = require("express");
 
@@ -42,10 +42,10 @@ router.post('/', async (req: Request, res: Response) => {
     const testCaseCount = await validateTestCases(result, problemId);
     console.log(`testCaseCount:-${testCaseCount}`);
 
-   const savedSubmissionResponse =  await saveSubmission(result, problemId, language_id, usersEmail, testCaseCount.testCaseCount,testCaseCount.totalTestCases, source_code,id);
-   console.log(`saveSubmissionResponse :- ${JSON.stringify(savedSubmissionResponse) }`);
-   
-   return res.json({ msg: result, testCaseCount,});
+    const savedSubmissionResponse = await saveSubmission(result, problemId, language_id, usersEmail, testCaseCount.testCaseCount, testCaseCount.totalTestCases, source_code, id);
+    console.log(`saveSubmissionResponse :- ${JSON.stringify(savedSubmissionResponse)}`);
+
+    return res.json({ msg: result, testCaseCount, });
 });
 
 
@@ -85,13 +85,14 @@ const saveSubmission = async (
         result,
         createdAt,
         code: source_code,
-        languageId: Number(language_id),    
+        languageId: Number(language_id),
         testCaseCount,
         totalTestCases,
-        status: (testCaseCount == 3 ? 'ACCEPTED' : 'WRONG_ANSWER'),
+        status: (testCaseCount == totalTestCases ? 'ACCEPTED' : 'WRONG_ANSWER'),
         problemId: Number(problemId),
     }
-
+    console.log(`submission data:- ${JSON.stringify(submission)}`);
+    
     try {
         const savedSubmission = await prisma.submission.create({
             data: submission
@@ -117,6 +118,8 @@ const fetchProblemDetails = async (problemId: number) => {
     })
 }
 
+const normalize = (str: string) => str.trim().replace(/^"|"$/g, '');
+
 const validateTestCases = async (result: Judge0Results, problemId: number): Promise<{ testCaseCount: number, totalTestCases: number }> => {
     const response1 = await fetchProblemDetails(problemId);
 
@@ -128,9 +131,9 @@ const validateTestCases = async (result: Judge0Results, problemId: number): Prom
     for (let i = 0; i < response1?.testCases.length!; i++) {
         console.log(`response1?.testCases:- ${JSON.stringify(response1?.testCases[i])}`);
         console.log(`result:- ${JSON.stringify(result[i])}`);
-        
-        const expectedOutput = JSON.stringify(response1?.testCases[i].output);
-        const actualOutput = result[i].stdout ? JSON.stringify(result[i].stdout.trim()) : null;
+
+        const expectedOutput = normalize(response1 ? response1?.testCases[i].output : '');
+        const actualOutput = normalize(result[i].stdout ? result[i].stdout.trim() : '');
 
         if (actualOutput === null) {
             console.log(`Test case ${i + 1} has no output.`);
@@ -195,7 +198,7 @@ router.get('/:submissionId', (req: Request, res: Response) => {
     // Get submission details by ID
 });
 
-router.get('/user/:userId',async (req: Request, res: Response) => {
+router.get('/user/:userId', async (req: Request, res: Response) => {
     // Get all submissions by user
     const userId = req.params['userId'];
     const respone = await prisma.submission.findMany({
@@ -204,7 +207,7 @@ router.get('/user/:userId',async (req: Request, res: Response) => {
         }
     })
     console.log(`respone:- ${JSON.stringify(respone)}`);
-    
+
     res.json(respone);
 });
 

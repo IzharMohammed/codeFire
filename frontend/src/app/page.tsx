@@ -14,15 +14,12 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   // 2 * 10 = 20
 
   const skip = (+page - 1) * (+take);
-  console.log(`skip:- ${skip}, take:- ${take}`);
 
   const session = await getServerSession(NEXT_AUTH);
-  console.log(`session:- ${session}`);
 
 
   const response = await axios.get(`http://localhost:4000/api/v1/problems/?skip=${skip}&take=${take}`);
   const problemList = response.data.data;
-  console.log("problemList:- ", response.data.hasMore);
 
   const hasMore = response.data.hasMore;
 

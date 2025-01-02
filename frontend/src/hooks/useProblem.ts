@@ -37,7 +37,7 @@ const useProblem = (id: number) => {
             try {
                 const response = await axios.get(`http://localhost:4000/api/v1/problems/${id}`);
                 console.log(`response:- ${JSON.stringify(response.data)}`);
-            setTemplate(response.data.template);
+                setTemplate(response.data.template);
                 setTestCases(response.data.testCases);
                 setProblem(response.data);
             } catch (error) {
