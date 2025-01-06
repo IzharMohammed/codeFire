@@ -4,6 +4,9 @@ import GitHubProvider from "next-auth/providers/github";
 import axios from "axios";
 
 export const NEXT_AUTH = {
+    pages: {
+        signIn: '/auth/signIn',
+    },
     providers: [
         // Credentials provider for email and password authentication
         CredentialsProvider({
@@ -125,9 +128,15 @@ export const NEXT_AUTH = {
                 });
             }
 
+            if (account?.provider === "signout") {
+                token = null;
+            }
+
+
             // Return the modified token
             return token;
         },
+
 
         // Session callback to modify session data before sending it to the client
         session: ({ session, token, user }: any) => {
@@ -137,6 +146,11 @@ export const NEXT_AUTH = {
                 session.user.username = token.username;
             }
             console.log(`session:- ${JSON.stringify(session)}`);
+
+            // Clear the session on logout
+            if (session.user.id === null || session.user.username === null) {
+                session = null;
+            }
 
             // Return the modified session object
             return session;

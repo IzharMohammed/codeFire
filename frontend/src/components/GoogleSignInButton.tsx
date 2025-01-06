@@ -5,22 +5,31 @@ import { Button } from './ui/button'
 import { FaGoogle } from 'react-icons/fa'
 import { signIn } from 'next-auth/react'
 import useCallbackUrl from '@/hooks/useCallBackUrl'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const GoogleSignInButton = () => {
     const callbackUrl = useCallbackUrl();
+    const router = useRouter();
+
+    const handleGoogleSignIn = async (e: any) => {
+        e.preventDefault();
+        try {
+            const result = await signIn('google');
+            console.log('result', result);
+                router.push('/');
+        } catch (error) {
+            console.error('An error occurred during Google sign-in:', error);
+        }
+    }
 
     return (
-        <Button variant="outline" className="w-full" onClick={() => signIn('google', { callbackUrl: '/'})}>
+        <Button
+            variant="outline"
+            className="w-full"
+            onClick={(e)=>handleGoogleSignIn(e)}>
             <FaGoogle style={{ marginRight: '8px' }} />
             Login with Google
         </Button>
-        // <Link
-    //     href={`/signin?callbackUrl=${callbackUrl}`}
-    //     className='bg-sky-400 rounded-md px-4 py-2'
-    //   >
-    //     signIn
-    //   </Link>
     )
 }
 
