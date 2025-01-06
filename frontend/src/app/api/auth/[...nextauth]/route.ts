@@ -7,7 +7,7 @@ import { NEXT_AUTH } from "@/lib/auth";
 //     return NextResponse.json({
 //         msg: nextauth
 //     })
-// }
+// }    
 
 const handler = NextAuth(NEXT_AUTH);
 

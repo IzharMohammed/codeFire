@@ -336,9 +336,9 @@ rotate 2 steps to the right: [3,99,-1,-100]
       {
         "language": "Python",
         "languageId": 71,
-        "starterCode": "class Solution:\n    def rotate(self, nums: List[int], k: int) -> None:\n        pass",
+        "starterCode": "from typing import List\n\nclass Solution:\n    def rotate(self, nums: List[int], k: int) -> None:\n        pass",
         "stdInRetrievalCode": "if __name__ == \"__main__\":\n    import sys\n    input_data = sys.stdin.read().strip().split(';')\n    nums = list(map(int, input_data[0].split(',')))\n    k = int(input_data[1])\n    Solution().rotate(nums, k)\n    print(','.join(map(str, nums)))",
-        "finalCode": "class Solution:\n    def rotate(self, nums: List[int], k: int) -> None:\n        k = k % len(nums)\n        nums[:] = nums[-k:] + nums[:-k]\n\nif __name__ == \"__main__\":\n    import sys\n    input_data = sys.stdin.read().strip().split(';')\n    nums = list(map(int, input_data[0].split(',')))\n    k = int(input_data[1])\n    Solution().rotate(nums, k)\n    print(','.join(map(str, nums)))"
+        "finalCode": "from typing import List\n\nclass Solution:\n    def rotate(self, nums: List[int], k: int) -> None:\n        k = k % len(nums)\n        nums[:] = nums[-k:] + nums[:-k]\n\nif __name__ == \"__main__\":\n    import sys\n    input_data = sys.stdin.read().strip().split(';')\n    nums = list(map(int, input_data[0].split(',')))\n    k = int(input_data[1])\n    Solution().rotate(nums, k)\n    print(','.join(map(str, nums)))"
       },
       {
         "language": "JavaScript",
@@ -351,17 +351,17 @@ rotate 2 steps to the right: [3,99,-1,-100]
         "language": "Java",
         "languageId": 62,
         "starterCode": "import java.util.*;\n\nclass Solution {\n    void reverse(int[] nums, int i, int j) {\n        \n    }\n\n    public void rotate(int[] nums, int k) {\n        \n    }\n}",
-        "stdInRetrievalCode": "public class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        String[] parts = input.split(\";\");\n        int[] nums = Arrays.stream(parts[0].split(\",\")).mapToInt(Integer::parseInt).toArray();\n        int k = Integer.parseInt(parts[1]);\n        new Solution().rotate(nums, k);\n        System.out.println(Arrays.toString(nums).replaceAll(\"[\\[\\] ]\", \"\"));\n    }\n}",
-        "finalCode": "import java.util.*;\n\nclass Solution {\n    void reverse(int[] nums, int i, int j) {\n        while (i < j) {\n            int temp = nums[i];\n            nums[i] = nums[j];\n            nums[j] = temp;\n            i++;\n            j--;\n        }\n    }\n\n    public void rotate(int[] nums, int k) {\n        k = k % nums.length;\n        reverse(nums, 0, nums.length - 1);\n        reverse(nums, 0, k - 1);\n        reverse(nums, k, nums.length - 1);\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        String[] parts = input.split(\";\");\n        int[] nums = Arrays.stream(parts[0].split(\",\")).mapToInt(Integer::parseInt).toArray();\n        int k = Integer.parseInt(parts[1]);\n        new Solution().rotate(nums, k);\n        System.out.println(Arrays.toString(nums).replaceAll(\"[\\[\\] ]\", \"\"));\n    }\n}"
+        "stdInRetrievalCode": "public class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        String[] parts = input.split(\";\");\n        int[] nums = Arrays.stream(parts[0].split(\",\")).mapToInt(Integer::parseInt).toArray();\n        int k = Integer.parseInt(parts[1]);\n        new Solution().rotate(nums, k);\n          System.out.println(Arrays.toString(nums).replaceAll(\"[\\[\\]\\s]\", \"\"));\n    }\n}",
+        "finalCode": "import java.util.*;\n\nclass Solution {\n    void reverse(int[] nums, int i, int j) {\n        while (i < j) {\n            int temp = nums[i];\n            nums[i] = nums[j];\n            nums[j] = temp;\n            i++;\n            j--;\n        }\n    }\n\n    public void rotate(int[] nums, int k) {\n        k = k % nums.length;\n        reverse(nums, 0, nums.length - 1);\n        reverse(nums, 0, k - 1);\n        reverse(nums, k, nums.length - 1);\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String input = scanner.nextLine();\n        String[] parts = input.split(\";\");\n        int[] nums = Arrays.stream(parts[0].split(\",\")).mapToInt(Integer::parseInt).toArray();\n        int k = Integer.parseInt(parts[1]);\n        new Solution().rotate(nums, k);\n        System.out.println(Arrays.toString(nums).replaceAll(\"[\\[\\]\\s]\", \"\"));\n    }\n}"
       },
       {
         "language": "C++",
         "languageId": 54,
-        "starterCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nclass Solution {\npublic:\n    void rotate(vector<int>& nums, int k) {\n        \n    }\n};",
+        "starterCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <algorithm> // For std::reverse\nusing namespace std;\n\nclass Solution {\npublic:\n    void rotate(vector<int>& nums, int k) {\n        \n    }\n};",
         "stdInRetrievalCode": "int main() {\n    string input;\n    getline(cin, input);\n    stringstream ss(input);\n    string nums_str, k_str;\n    getline(ss, nums_str, ';');\n    getline(ss, k_str, ';');\n    vector<int> nums;\n    stringstream nums_ss(nums_str);\n    string num;\n    while (getline(nums_ss, num, ',')) {\n        nums.push_back(stoi(num));\n    }\n    int k = stoi(k_str);\n    Solution().rotate(nums, k);\n    for (int i = 0; i < nums.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << nums[i];\n    }\n    cout << endl;\n    return 0;\n}",
-        "finalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nclass Solution {\npublic:\n    void rotate(vector<int>& nums, int k) {\n        k = k % nums.size();\n        reverse(nums.begin(), nums.end());\n        reverse(nums.begin(), nums.begin() + k);\n        reverse(nums.begin() + k, nums.end());\n    }\n};\n\nint main() {\n    string input;\n    getline(cin, input);\n    stringstream ss(input);\n    string nums_str, k_str;\n    getline(ss, nums_str, ';');\n    getline(ss, k_str, ';');\n    vector<int> nums;\n    stringstream nums_ss(nums_str);\n    string num;\n    while (getline(nums_ss, num, ',')) {\n        nums.push_back(stoi(num));\n    }\n    int k = stoi(k_str);\n    Solution().rotate(nums, k);\n    for (int i = 0; i < nums.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << nums[i];\n    }\n    cout << endl;\n    return 0;\n}"
+        "finalCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <algorithm> // For std::reverse\nusing namespace std;\n\nclass Solution {\npublic:\n    void rotate(vector<int>& nums, int k) {\n        k = k % nums.size();\n        reverse(nums.begin(), nums.end());\n        reverse(nums.begin(), nums.begin() + k);\n        reverse(nums.begin() + k, nums.end());\n    }\n};\n\nint main() {\n    string input;\n    getline(cin, input);\n    stringstream ss(input);\n    string nums_str, k_str;\n    getline(ss, nums_str, ';');\n    getline(ss, k_str, ';');\n    vector<int> nums;\n    stringstream nums_ss(nums_str);\n    string num;\n    while (getline(nums_ss, num, ',')) {\n        nums.push_back(stoi(num));\n    }\n    int k = stoi(k_str);\n    Solution().rotate(nums, k);\n    for (int i = 0; i < nums.size(); ++i) {\n        if (i > 0) cout << \",\";\n        cout << nums[i];\n    }\n    cout << endl;\n    return 0;\n}"
       }
-    ]
+    ]      
   },
   {
     "title": "Valid Palindrome",
@@ -1797,7 +1797,7 @@ points[i].length == 2
 -10^4 <= xi, yi <= 10^4
 All the points are unique.
     `,
-   "difficulty": "Hard",
+    "difficulty": "Hard",
     "testCases": [
       { "input": "[[1,1],[2,2],[3,3]]", "output": "3" },
       { "input": "[[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]]", "output": "4" }
